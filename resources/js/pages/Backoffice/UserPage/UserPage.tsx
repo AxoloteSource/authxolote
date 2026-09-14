@@ -3,17 +3,19 @@ import { DataTableFilter } from '@/components/Tables/DataTableFilter/DataTableFi
 import { RoutesBackoffice } from '@/routes/modules/backoffice.routes'
 import { useServiceIndexUsers } from '@/services/authxolote/users/useServiceUsers'
 import { FilterFormUser } from './partials/FilterFormUser'
+import { UserForm } from './partials/UserForm/UserForm'
 import { useUserPage } from './useUserPage'
 
 const breadCrumblesItems = [{ to: RoutesBackoffice.Home, children: 'home' }, { children: 'users' }]
 
 const UserPage = () => {
-  const { filters, renderersMap } = useUserPage()
+  const { filters, renderersMap, isOpen, open, close, refreshKey, handleSuccess } = useUserPage()
   return (
     <Page titleTranslation="users" breadCrumblesItems={breadCrumblesItems}>
-      <DataTableFilter filters={filters} onClickNew={() => {}} service={useServiceIndexUsers} renderersMap={renderersMap} showNewButton={false} withoutFilters={false}>
+      <DataTableFilter key={refreshKey} filters={filters} onClickNew={open} service={useServiceIndexUsers} renderersMap={renderersMap}>
         {(formik) => <FilterFormUser formik={formik} />}
       </DataTableFilter>
+      <UserForm onSuccess={handleSuccess} close={close} isOpen={isOpen} />
     </Page>
   )
 }

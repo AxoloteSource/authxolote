@@ -1,5 +1,5 @@
 import { ApisEnum } from '@/configs/apisEnum'
-import { useGET } from '@/hooks/useApi'
+import { useGET, usePOST } from '@/hooks/useApi'
 import { IPaginate } from '@/interfaces/IPaginate'
 import { IPaginateServiceProps } from '@/interfaces/IPaginateServiceProps'
 import { IUser } from '@/interfaces/models/User/user.interface'
@@ -19,3 +19,5 @@ export const useServiceIndexUsers = ({ filters = [], search = null, page = 1, li
     }
   })
 }
+
+export const useServiceStoreUser = () => usePOST<IUser>({ url, customHost: urlLogin })
