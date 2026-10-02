@@ -13,7 +13,7 @@ class AttachRolesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'authxolote:actions';
+    protected $signature = 'authxolote:actions {--force : Ignora y reinicia las modificaciones manuales hechas desde el front}';
 
     /**
      * The console command description.
@@ -34,7 +34,7 @@ class AttachRolesCommand extends Command
 
             return 1;
         }
-        $result = $this->attach($roles);
+        $result = $this->attach($roles, (bool) $this->option('force'));
 
         if (! $result) {
             $this->error('Ocurrió un error al asociar los roles.');
@@ -48,10 +48,10 @@ class AttachRolesCommand extends Command
 
     }
 
-    public function attach($roles): bool
+    public function attach(array $roles, bool $force = false): bool
     {
         $logic = new RoleActionStoreLogic;
-        $data = new StoreRoleActionData($roles);
+        $data = new StoreRoleActionData($roles, $force);
 
         $response = $logic->run($data);
 

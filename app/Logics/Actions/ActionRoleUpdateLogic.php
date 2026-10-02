@@ -4,6 +4,7 @@ namespace App\Logics\Actions;
 
 use App\Data\ActionRole\UpdateActionRoleData;
 use App\Models\Action;
+use App\Models\ActionRoleOverride;
 use AxoloteSource\Logics\Logics\UpdateLogic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -28,6 +29,11 @@ class ActionRoleUpdateLogic extends UpdateLogic
         $roleId = $this->input->roleId;
         $action = $this->model->find($this->input->id);
         $this->input->active ? $action->roles()->syncWithoutDetaching([$roleId]) : $action->roles()->detach($roleId);
+
+        ActionRoleOverride::updateOrCreate(
+            ['role_id' => $roleId, 'action_id' => $action->id],
+            ['active' => $this->input->active]
+        );
 
         return true;
     }

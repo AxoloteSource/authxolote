@@ -28,7 +28,12 @@ class ActionRoleUpdateTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseHas('action_role', [
             'role_id' => $role->id,
-            'action_id' => $action->id
+            'action_id' => $action->id,
+        ]);
+        $this->assertDatabaseHas('action_role_overrides', [
+            'role_id' => $role->id,
+            'action_id' => $action->id,
+            'active' => true,
         ]);
     }
 
@@ -52,6 +57,11 @@ class ActionRoleUpdateTest extends TestCase
         $this->assertDatabaseMissing('action_role', [
             'action_id' => $action->id,
             'role_id' => $role->id,
+        ]);
+        $this->assertDatabaseHas('action_role_overrides', [
+            'action_id' => $action->id,
+            'role_id' => $role->id,
+            'active' => false,
         ]);
     }
 }
