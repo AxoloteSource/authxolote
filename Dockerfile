@@ -31,6 +31,8 @@ RUN pnpm build
 
 # ---------------------------------------------------------------------------
 # 2) PHP dependencies (Composer, no dev)
+#    GITHUB_TOKEN: Personal Access Token con acceso a repos privados
+#    de AxoloteSource. Se usa solo en build, nunca queda en la imagen final.
 # ---------------------------------------------------------------------------
 FROM dunglas/frankenphp:php8.4-trixie AS vendor
 
@@ -39,6 +41,11 @@ RUN install-php-extensions zip
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
+
+ARG GITHUB_TOKEN
+RUN if [ -n "$GITHUB_TOKEN" ]; then \
+        composer config --global github-oauth.github.com "$GITHUB_TOKEN"; \
+    fi
 
 COPY composer.json composer.lock ./
 RUN composer install \
