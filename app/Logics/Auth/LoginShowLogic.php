@@ -2,10 +2,10 @@
 
 namespace App\Logics\Auth;
 
-use AxoloteSource\Logics\Logics\ShowLogic;
 use App\Data\Auth\LoginData;
 use App\Http\Resources\Auth\LoginResource;
 use App\Models\User;
+use AxoloteSource\Logics\Logics\ShowLogic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;

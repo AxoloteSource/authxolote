@@ -6,5 +6,5 @@ use Spatie\LaravelData\Data;
 
 class ChangePasswordData extends Data
 {
-    public function __construct(){}
+    public function __construct() {}
 }

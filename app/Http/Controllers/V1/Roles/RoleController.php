@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\V1\Roles;
 
-use AxoloteSource\Logics\Data\IndexData;
 use App\Http\Controllers\Controller;
 use App\Logics\Roles\RoleIndexLogic;
+use AxoloteSource\Logics\Data\IndexData;
 use Illuminate\Http\JsonResponse;
 
 class RoleController extends Controller

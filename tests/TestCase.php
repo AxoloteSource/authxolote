@@ -2,9 +2,9 @@
 
 namespace Tests;
 
-use AxoloteSource\Logics\ErrorContainer;
 use App\Enums\RoleEnum;
 use App\Models\User;
+use AxoloteSource\Logics\ErrorContainer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;

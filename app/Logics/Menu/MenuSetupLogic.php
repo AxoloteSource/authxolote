@@ -124,7 +124,6 @@ class MenuSetupLogic extends StoreLogic
                 logger('entro aquí');
                 logger('debug', [$existingBySlug, $parentId, $existingBySlug->menu_id, $menu->id, $existingBySlug->parent_id, $parentId]);
 
-
                 $this->error(__('The menu item slug ":slug" is already registered for another menu or parent.', ['slug' => $key]));
 
                 return;
