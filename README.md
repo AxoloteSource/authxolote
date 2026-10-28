@@ -94,6 +94,7 @@ All APIs are located under the `/api/v1` prefix.
 | Method | Endpoint | Description | Parameters | Response | Requires Auth |
 |---|---|---|---|---|---------------|
 | POST | `/login` | Logs in and returns a Passport token. | `email`, `password` | User data + `access_token` | No            |
+| POST | `/validate-credentials` | Validates credentials without issuing a Passport token. Requires the `auth.validate-credentials` action. | `email`, `password` | `{"valid": bool}` | Yes           |
 | POST | `/register` | Registers a new user. | `name`, `email`, `password`, `password_confirmation`, `role_key` | User data | No            |
 | POST | `/logout` | Revokes the current access token. | None | `{"message": "Logged out"}` | Yes           |
 | POST | `/me` | Gets the authenticated user's information. | None | User data + `role` | Yes           |

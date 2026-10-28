@@ -8,6 +8,7 @@ use App\Data\Auth\LoginData;
 use App\Data\Auth\OtpResetPasswordData;
 use App\Data\Auth\RecoveryPasswordData;
 use App\Data\Auth\RegisterData;
+use App\Data\Auth\ValidateCredentialsData;
 use App\Http\Controllers\Controller;
 use App\Logics\Auth\ChangePasswordLogic;
 use App\Logics\Auth\IsAllowedLogic;
@@ -17,6 +18,7 @@ use App\Logics\Auth\MeLogic;
 use App\Logics\Auth\OtpResetPasswordLogic;
 use App\Logics\Auth\RecoveryPasswordLogic;
 use App\Logics\Auth\RegisterStoreLogic;
+use App\Logics\Auth\ValidateCredentialsLogic;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
@@ -27,6 +29,11 @@ class AuthController extends Controller
     }
 
     public function login(LoginData $data, LoginShowLogic $logic): JsonResponse
+    {
+        return $logic->run($data);
+    }
+
+    public function validateCredentials(ValidateCredentialsData $data, ValidateCredentialsLogic $logic): JsonResponse
     {
         return $logic->run($data);
     }

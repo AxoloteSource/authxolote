@@ -86,5 +86,6 @@
   "Roles": "Roles",
   "Pricing Card": "Pricing Card",
   "menu_slug_missing": "Falta configurar la variable de entorno VITE_MENU_SLUG",
-  "UI Components": "UI Components"
+  "UI Components": "UI Components",
+  "Validate user credentials": "Validar credenciales de usuario"
 }

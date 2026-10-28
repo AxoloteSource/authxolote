@@ -46,5 +46,6 @@ return [
     'flow_delete' => 'Eliminar registros de flujo',
     'change_password' => 'Cambiar contraseña del usuario',
     'reset_password' => 'Restablecer contraseña del usuario',
+    'validate_credentials' => 'Validar credenciales del usuario',
 
 ];

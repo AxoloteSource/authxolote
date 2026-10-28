@@ -46,5 +46,6 @@ return [
     'flow_delete' => 'Delete flow records',
     'change_password' => 'Change user password',
     'reset_password' => 'Reset user password',
+    'validate_credentials' => 'Validate user credentials',
 
 ];
