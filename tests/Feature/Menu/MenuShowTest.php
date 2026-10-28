@@ -62,7 +62,7 @@ class MenuShowTest extends TestCase
 
     public function test_it_hides_menu_items_not_linked_to_the_user_role(): void
     {
-        $this->loginAdmin();
+        $this->loginAdmin()->attachAction(['auth.menus.show']);
 
         $menu = Menu::factory()->create();
         $visible = MenuItem::factory()->create(['menu_id' => $menu->id]);
@@ -79,7 +79,7 @@ class MenuShowTest extends TestCase
 
     public function test_it_hides_an_unlinked_parent_together_with_its_children(): void
     {
-        $this->loginAdmin();
+        $this->loginAdmin()->attachAction(['auth.menus.show']);
 
         $menu = Menu::factory()->create();
         $header = MenuItem::factory()->header()->create(['menu_id' => $menu->id]);
@@ -95,7 +95,7 @@ class MenuShowTest extends TestCase
 
     public function test_it_shows_linked_children_within_a_linked_header(): void
     {
-        $this->loginAdmin();
+        $this->loginAdmin()->attachAction(['auth.menus.show']);
 
         $menu = Menu::factory()->create();
         $header = MenuItem::factory()->header()->create(['menu_id' => $menu->id]);

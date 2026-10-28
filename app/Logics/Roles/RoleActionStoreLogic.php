@@ -42,7 +42,7 @@ class RoleActionStoreLogic extends Logic
                 $name = is_string($key) ? $key : $value;
                 $description = is_string($key) ? $value : null;
 
-                return Action::updateOrCreate(
+                return Action::withTrashed()->updateOrCreate(
                     ['name' => $name],
                     ['description' => $description]
                 )->id;

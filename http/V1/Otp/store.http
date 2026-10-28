@@ -1,0 +1,36 @@
+@destination = otp@example.com
+
+### OTP - Create challenge (email)
+# @name createOtpEmail
+POST {{authUrl}}api/v1/otp/challenges
+Accept: application/json
+Content-Type: application/json
+
+{
+  "purpose": "login",
+  "channel": "email",
+  "destination": "{{destination}}"
+}
+
+> {%
+    const challengeId = response.body?.data?.challenge_id;
+
+    if (!challengeId) {
+        client.log("challenge_id not found in response.body.data.challenge_id");
+    } else {
+        client.global.set("challengeId", challengeId);
+        client.log("challenge_id saved to global variable: challengeId");
+    }
+%}
+
+### OTP - Create challenge (whatsapp)
+# @name createOtpWhatsapp
+POST {{authUrl}}api/v1/otp/challenges
+Accept: application/json
+Content-Type: application/json
+
+{
+  "purpose": "login",
+  "channel": "whatsapp",
+  "destination": "+5213121234567"
+}

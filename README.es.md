@@ -37,6 +37,16 @@ Sigue estos pasos para poner en marcha el proyecto:
    **Variables de entorno del frontend (Backoffice):**
    - `VITE_MENU_SLUG`: El slug del menú que se renderiza en el Backoffice mediante el componente `MenuV2`. Debe coincidir con el `slug` de un menú existente en la base de datos (ej. `auth`).
 
+   **Variables de entorno para el envío de OTP:**
+   Los códigos OTP se envían de forma asíncrona mediante el servicio externo Messages. Configura:
+   - `OTP_DELIVERY_DRIVER`: Driver de envío. Usa `messages` (por defecto) para enviar a través del servicio Messages, o `fake` para solo registrar los códigos enviados (útil para desarrollo local y pruebas).
+   - `MESSAGES_BASE_URL`: URL base del servicio Messages. Es obligatoria cuando se usa el driver `messages`.
+   - `MESSAGES_OTP_ENDPOINT`: Ruta del endpoint que recibe los mensajes. Por defecto `/messages`.
+   - `MESSAGES_TOKEN`: Token Bearer utilizado para autenticarse contra el servicio Messages.
+   - `MESSAGES_TIMEOUT`: Tiempo de espera HTTP en segundos para las peticiones al servicio Messages. Por defecto `10`.
+
+   Si `MESSAGES_BASE_URL` está vacío, el envío de OTP falla con el mensaje `The messages service is not configured.`.
+
    Genera la clave de la aplicación:
    ```bash
    php artisan key:generate
