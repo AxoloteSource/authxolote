@@ -99,4 +99,46 @@ class Setting extends Model
 
         return intval($data ?? 60);
     }
+
+    public static function getOtpCodeDigits(): int
+    {
+        $data = self::findByKey(SettingEnum::OtpCodeDigits)?->value;
+
+        return intval($data ?? 6);
+    }
+
+    public static function getOtpChallengeExpirationSeconds(): int
+    {
+        $data = self::findByKey(SettingEnum::OtpChallengeExpirationSeconds)?->value;
+
+        return intval($data ?? 300);
+    }
+
+    public static function getOtpChallengeMaxAttempts(): int
+    {
+        $data = self::findByKey(SettingEnum::OtpChallengeMaxAttempts)?->value;
+
+        return intval($data ?? 5);
+    }
+
+    public static function getOtpResendCooldownSeconds(): int
+    {
+        $data = self::findByKey(SettingEnum::OtpResendCooldownSeconds)?->value;
+
+        return intval($data ?? 60);
+    }
+
+    public static function getOtpRateLimitMax(): int
+    {
+        $data = self::findByKey(SettingEnum::OtpRateLimitMax)?->value;
+
+        return intval($data ?? 5);
+    }
+
+    public static function getOtpRateLimitDecaySeconds(): int
+    {
+        $data = self::findByKey(SettingEnum::OtpRateLimitDecaySeconds)?->value;
+
+        return intval($data ?? 600);
+    }
 }

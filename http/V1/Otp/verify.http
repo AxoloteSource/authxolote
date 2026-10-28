@@ -1,0 +1,11 @@
+@challengeId = {{challengeId}}
+
+### OTP - Verify challenge
+# @name verifyOtp
+POST {{authUrl}}api/v1/otp/challenges/{{challengeId}}/verify
+Accept: application/json
+Content-Type: application/json
+
+{
+  "code": "123456"
+}

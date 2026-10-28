@@ -10,7 +10,7 @@ class ActionRoleStoreTest extends TestCase
 {
     public function test_can_store_action_role_relationship()
     {
-        $this->loginAdmin();
+        $this->loginAdmin()->attachAction(['auth.role.attach.actions']);
 
         $payload = [
             'roles' => [
@@ -42,7 +42,7 @@ class ActionRoleStoreTest extends TestCase
 
     public function test_cannot_store_duplicate_roles()
     {
-        $this->loginAdmin();
+        $this->loginAdmin()->attachAction(['auth.role.attach.actions']);
 
         $duplicatedRole = 'Role'.$this->faker->unique()->word;
         $actionName = 'action.'.$this->faker->unique()->word.'.index';

@@ -65,7 +65,49 @@ class SettingSeeder extends Seeder
                 'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
                 'group' => 'auth',
             ],
+            [
+                'name' => 'otp_code_digits',
+                'value' => '6',
+                'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
+                'group' => 'auth',
+            ],
+            [
+                'name' => 'otp_challenge_expiration_seconds',
+                'value' => '300',
+                'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
+                'group' => 'auth',
+            ],
+            [
+                'name' => 'otp_challenge_max_attempts',
+                'value' => '5',
+                'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
+                'group' => 'auth',
+            ],
+            [
+                'name' => 'otp_resend_cooldown_seconds',
+                'value' => '60',
+                'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
+                'group' => 'auth',
+            ],
+            [
+                'name' => 'otp_rate_limit_max',
+                'value' => '5',
+                'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
+                'group' => 'auth',
+            ],
+            [
+                'name' => 'otp_rate_limit_decay_seconds',
+                'value' => '600',
+                'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
+                'group' => 'auth',
+            ],
         ];
-        Setting::upsert($settings, ['name'], ['value', 'setting_value_type_id', 'group']);
+
+        foreach ($settings as $setting) {
+            Setting::firstOrCreate(
+                ['name' => $setting['name']],
+                $setting,
+            );
+        }
     }
 }
