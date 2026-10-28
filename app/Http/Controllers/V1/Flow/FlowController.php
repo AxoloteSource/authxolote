@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\V1\Flow;
 
-use AxoloteSource\Logics\Data\Flow\FlowByIdData;
-use AxoloteSource\Logics\Data\Flow\FlowIndexData;
 use App\Http\Controllers\Controller;
 use App\Logics\Flow\FlowDeleteLogic;
 use App\Logics\Flow\FlowIndexLogic;
 use App\Logics\Flow\FlowShowLogic;
 use App\Logics\Flow\FlowStoreLogic;
 use App\Logics\Flow\FlowUpdateLogic;
+use AxoloteSource\Logics\Data\Flow\FlowByIdData;
+use AxoloteSource\Logics\Data\Flow\FlowIndexData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

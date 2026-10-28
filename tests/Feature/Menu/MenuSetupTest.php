@@ -7,6 +7,7 @@ use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Role;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class MenuSetupTest extends TestCase
@@ -15,6 +16,7 @@ class MenuSetupTest extends TestCase
     {
         parent::setUp();
 
+        DB::table('menu_item_role')->delete();
         MenuItem::query()->forceDelete();
         Menu::query()->forceDelete();
         Application::query()->forceDelete();
