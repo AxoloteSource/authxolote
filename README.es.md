@@ -94,6 +94,7 @@ Todas las APIs se encuentran bajo el prefijo `/api/v1`.
 | Método | Endpoint | Descripción | Parámetros | Respuesta | Requiere Auth |
 |---|---|---|---|---|---------------|
 | POST | `/login` | Inicia sesión y devuelve un token de Passport. | `email`, `password` | Datos del usuario + `access_token` | No            |
+| POST | `/validate-credentials` | Valida credenciales sin emitir un token de Passport. Requiere la acción `auth.validate-credentials`. | `email`, `password` | `{"valid": bool}` | Sí            |
 | POST | `/register` | Registra un nuevo usuario. | `name`, `email`, `password`, `password_confirmation`, `role_key` | Datos del usuario | No            |
 | POST | `/logout` | Revoca el token de acceso actual. | Ninguno | `{"message": "Logged out"}` | Sí            |
 | POST | `/me` | Obtiene la información del usuario autenticado. | Ninguno | Datos del usuario + `role` | Sí            |

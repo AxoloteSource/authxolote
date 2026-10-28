@@ -59,6 +59,7 @@ return [
         'auth.flow.delete' => 'actions.flow_delete',
         'auth.change-password' => 'actions.change_password',
         'auth.reset-password' => 'actions.reset_password',
+        'auth.validate-credentials' => 'actions.validate_credentials',
     ],
 
 ];
