@@ -11,29 +11,30 @@ use App\Models\OtpChallenge;
 use Illuminate\Http\JsonResponse;
 
 /**
- * Gestión de retos OTP (One-Time Password).
+ * One-time password (OTP) challenges.
  *
- * Endpoints públicos para generar y verificar códigos OTP enviados por correo
- * electrónico o WhatsApp.
+ * Public endpoints used to generate and verify OTP codes delivered by email or
+ * WhatsApp.
  *
  * @group OTP
  */
 class OtpChallengeController extends Controller
 {
     /**
-     * Crear un reto OTP.
+     * Create an OTP challenge.
      *
-     * Genera un código OTP, invalida los retos activos previos del mismo destino
-     * y propósito, y lo envía por el canal indicado. El código nunca se devuelve
-     * en la respuesta; solo se expone el identificador del reto y sus tiempos.
+     * Generates an OTP code, invalidates previous active challenges for the
+     * same destination and purpose, and delivers the code through the selected
+     * channel. The code is never returned in the response; only the challenge
+     * identifier and its timings are exposed.
      *
      * @unauthenticated
      *
-     * @bodyParam purpose string required Propósito del código. Valores permitidos: login, verify_email, verify_phone, password_reset, two_factor, sensitive_action, change_email, change_phone. Example: login
-     * @bodyParam channel string required Canal de envío del código. Valores permitidos: email, whatsapp. Example: email
-     * @bodyParam destination string required Destino del código. Si el canal es email debe ser un correo válido; si es whatsapp debe ser un teléfono con formato internacional. Example: usuario@example.com
+     * @bodyParam purpose string required Purpose of the code. Allowed values: login, verify_email, verify_phone, password_reset, two_factor, sensitive_action, change_email, change_phone. Example: login
+     * @bodyParam channel string required Delivery channel of the code. Allowed values: email, whatsapp. Example: email
+     * @bodyParam destination string required Destination of the code. When the channel is email it must be a valid email address; when it is whatsapp it must be a phone number in international format. Example: jane.doe@example.com
      *
-     * @response status=201 scenario="Reto creado" {
+     * @response status=201 scenario="Challenge created" {
      *   "status": "OK",
      *   "message": null,
      *   "data": {
@@ -43,7 +44,7 @@ class OtpChallengeController extends Controller
      *     "channel": "email"
      *   }
      * }
-     * @response status=422 scenario="Error de validación" {
+     * @response status=422 scenario="Validation error" {
      *   "status": "error",
      *   "message": null,
      *   "data": {
@@ -52,12 +53,12 @@ class OtpChallengeController extends Controller
      *     ]
      *   }
      * }
-     * @response status=422 scenario="Espera entre envíos" {
+     * @response status=422 scenario="Cooldown between deliveries" {
      *   "status": "error",
      *   "message": "Please wait 45 seconds before requesting a new OTP.",
      *   "data": null
      * }
-     * @response status=422 scenario="Límite de solicitudes excedido" {
+     * @response status=422 scenario="Request limit exceeded" {
      *   "status": "error",
      *   "message": "Too many OTP requests. Please try again later.",
      *   "data": null
@@ -69,31 +70,31 @@ class OtpChallengeController extends Controller
     }
 
     /**
-     * Verificar un reto OTP.
+     * Verify an OTP challenge.
      *
-     * Valida el código recibido contra el reto indicado. Cada intento fallido
-     * incrementa el contador de intentos y el reto se bloquea al alcanzar el
-     * máximo configurado. Un código correcto solo puede utilizarse una vez.
+     * Validates the received code against the given challenge. Every failed
+     * attempt increments the attempt counter and the challenge is locked once
+     * the configured maximum is reached. A correct code can only be used once.
      *
      * @unauthenticated
      *
-     * @urlParam challenge string required Identificador UUID del reto OTP. Example: 0195f51e-4a37-7087-b5f7-57d001537ab6
+     * @urlParam challenge_id string required UUID of the OTP challenge. Example: 0195f51e-4a37-7087-b5f7-57d001537ab6
      *
-     * @bodyParam code string required Código OTP recibido. La longitud debe coincidir con la configuración del sistema (por defecto 6 dígitos). Example: 123456
+     * @bodyParam code string required OTP code received by the user. Its length must match the system configuration (6 digits by default). Example: 123456
      *
-     * @response status=200 scenario="Código verificado" {
+     * @response status=200 scenario="Code verified" {
      *   "status": "OK",
      *   "message": null,
      *   "data": {
      *     "verified": true
      *   }
      * }
-     * @response status=422 scenario="Código inválido, expirado, ya usado o máximo de intentos alcanzado" {
+     * @response status=422 scenario="Invalid, expired, already used code, or maximum attempts reached" {
      *   "status": "error",
      *   "message": "Invalid OTP code.",
      *   "data": null
      * }
-     * @response status=422 scenario="Error de validación" {
+     * @response status=422 scenario="Validation error" {
      *   "status": "error",
      *   "message": null,
      *   "data": {
@@ -102,7 +103,7 @@ class OtpChallengeController extends Controller
      *     ]
      *   }
      * }
-     * @response status=404 scenario="Reto no encontrado" {
+     * @response status=404 scenario="Challenge not found" {
      *   "message": "No query results for model [App\\Models\\OtpChallenge] 0195f51e-4a37-7087-b5f7-57d001537ab6"
      * }
      */
