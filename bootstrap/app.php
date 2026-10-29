@@ -21,6 +21,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 'status' => 'ok',
             ]));
 
+            Route::get('/docs', function () {
+                $documentation = public_path('docs/index.html');
+
+                abort_unless(file_exists($documentation), 404);
+
+                return response()->file($documentation);
+            })->name('docs');
+
             Route::prefix('/api/v1')
                 ->middleware(['setHeaders', 'api', 'transaction'])
                 ->group(base_path('routes/api.php'));
