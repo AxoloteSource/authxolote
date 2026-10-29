@@ -141,4 +141,18 @@ class Setting extends Model
 
         return intval($data ?? 600);
     }
+
+    public static function getAccessTokenExpiresInMinutes(): int
+    {
+        $data = self::findByKey(SettingEnum::AccessTokenExpiresInMinutes)?->value;
+
+        return intval($data ?? 60);
+    }
+
+    public static function getRefreshTokenExpiresInMinutes(): int
+    {
+        $data = self::findByKey(SettingEnum::RefreshTokenExpiresInMinutes)?->value;
+
+        return intval($data ?? 43200);
+    }
 }

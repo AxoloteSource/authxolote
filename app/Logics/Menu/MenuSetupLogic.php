@@ -2,9 +2,14 @@
 
 namespace App\Logics\Menu;
 
+use App\Data\Application\ApplicationStoreData;
 use App\Data\Menu\MenuSetupData;
+use App\Data\Menu\MenuStoreData;
+use App\Data\MenuItem\MenuItemStoreData;
 use App\Enums\MenuItemType;
 use App\Http\Resources\Menu\MenuShowResource;
+use App\Logics\Application\ApplicationStoreLogic;
+use App\Logics\MenuItem\MenuItemStoreLogic;
 use App\Models\Application;
 use App\Models\Menu;
 use App\Models\MenuItem;
@@ -66,13 +71,13 @@ class MenuSetupLogic extends StoreLogic
             return $existing;
         }
 
-        $applicationData = new \App\Data\Application\ApplicationStoreData(
+        $applicationData = new ApplicationStoreData(
             name: $this->input->application->name,
             slug: $this->input->application->slug,
             description: $this->input->application->description,
         );
 
-        $logic = app(\App\Logics\Application\ApplicationStoreLogic::class);
+        $logic = app(ApplicationStoreLogic::class);
         $logic->lazyRun($applicationData);
 
         return $logic->model;
@@ -92,7 +97,7 @@ class MenuSetupLogic extends StoreLogic
             return $existing;
         }
 
-        $menuData = new \App\Data\Menu\MenuStoreData(
+        $menuData = new MenuStoreData(
             application_id: $application->id,
             name: $this->input->name,
             slug: $this->input->name,
@@ -101,7 +106,7 @@ class MenuSetupLogic extends StoreLogic
             active: true,
         );
 
-        $logic = app(\App\Logics\Menu\MenuStoreLogic::class);
+        $logic = app(MenuStoreLogic::class);
         $logic->lazyRun($menuData);
 
         return $logic->model;
@@ -118,10 +123,7 @@ class MenuSetupLogic extends StoreLogic
 
             $existingBySlug = MenuItem::where('slug', $key)->first();
 
-            logger('$existingBySlug', [$existingBySlug]);
-
             if ($existingBySlug && ($existingBySlug->menu_id !== $menu->id || $existingBySlug->parent_id !== $parentId)) {
-                logger('entro aquí');
                 logger('debug', [$existingBySlug, $parentId, $existingBySlug->menu_id, $menu->id, $existingBySlug->parent_id, $parentId]);
 
                 $this->error(__('The menu item slug ":slug" is already registered for another menu or parent.', ['slug' => $key]));
@@ -139,7 +141,7 @@ class MenuSetupLogic extends StoreLogic
                 continue;
             }
 
-            $menuItemData = new \App\Data\MenuItem\MenuItemStoreData(
+            $menuItemData = new MenuItemStoreData(
                 menu_id: $menu->id,
                 parent_id: $parentId,
                 type: $type,
@@ -152,7 +154,7 @@ class MenuSetupLogic extends StoreLogic
                 active: true,
             );
 
-            $logic = app(\App\Logics\MenuItem\MenuItemStoreLogic::class);
+            $logic = app(MenuItemStoreLogic::class);
             $logic->lazyRun($menuItemData);
 
             if (! empty($item['roles'])) {

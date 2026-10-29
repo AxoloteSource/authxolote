@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             UserListSeeder::class,
             SettingValueTypeSeeder::class,
             SettingSeeder::class,
+            PassportClientSeeder::class,
             ApplicationSeeder::class,
             MenuSeeder::class,
             MenuItemSeeder::class,

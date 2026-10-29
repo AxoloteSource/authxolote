@@ -19,4 +19,6 @@ enum SettingEnum: string
     case OtpResendCooldownSeconds = 'otp_resend_cooldown_seconds';
     case OtpRateLimitMax = 'otp_rate_limit_max';
     case OtpRateLimitDecaySeconds = 'otp_rate_limit_decay_seconds';
+    case AccessTokenExpiresInMinutes = 'access_token_expires_in_minutes';
+    case RefreshTokenExpiresInMinutes = 'refresh_token_expires_in_minutes';
 }

@@ -55,4 +55,10 @@ class SettingSeederTest extends TestCase
 
         $this->assertSame($settingsCount, Setting::count());
     }
+
+    public function test_token_expiration_settings_are_seeded(): void
+    {
+        $this->assertSame('60', Setting::findByKey(SettingEnum::AccessTokenExpiresInMinutes)?->value);
+        $this->assertSame('43200', Setting::findByKey(SettingEnum::RefreshTokenExpiresInMinutes)?->value);
+    }
 }

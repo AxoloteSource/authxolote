@@ -7,6 +7,7 @@ use App\Data\Auth\IsAllowedData;
 use App\Data\Auth\LoginData;
 use App\Data\Auth\OtpResetPasswordData;
 use App\Data\Auth\RecoveryPasswordData;
+use App\Data\Auth\RefreshTokenData;
 use App\Data\Auth\RegisterData;
 use App\Data\Auth\ValidateCredentialsData;
 use App\Http\Controllers\Controller;
@@ -17,6 +18,7 @@ use App\Logics\Auth\LogoutLogic;
 use App\Logics\Auth\MeLogic;
 use App\Logics\Auth\OtpResetPasswordLogic;
 use App\Logics\Auth\RecoveryPasswordLogic;
+use App\Logics\Auth\RefreshTokenLogic;
 use App\Logics\Auth\RegisterStoreLogic;
 use App\Logics\Auth\ValidateCredentialsLogic;
 use Illuminate\Http\JsonResponse;
@@ -67,7 +69,10 @@ class AuthController extends Controller
      *         "key": "admin"
      *       }
      *     },
-     *     "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+     *     "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...",
+     *     "refresh_token": "def50200a1b2c3d4e5f6...",
+     *     "token_type": "Bearer",
+     *     "expires_in": 3600
      *   }
      * }
      * @response status=403 scenario="Missing permission" {
@@ -122,7 +127,10 @@ class AuthController extends Controller
      *         "key": "admin"
      *       }
      *     },
-     *     "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+     *     "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...",
+     *     "refresh_token": "def50200a1b2c3d4e5f6...",
+     *     "token_type": "Bearer",
+     *     "expires_in": 3600
      *   }
      * }
      * @response status=422 scenario="Invalid credentials" {
@@ -132,6 +140,46 @@ class AuthController extends Controller
      * }
      */
     public function login(LoginData $data, LoginShowLogic $logic): JsonResponse
+    {
+        return $logic->run($data);
+    }
+
+    /**
+     * Refresh the access token.
+     *
+     * Exchanges a valid refresh token for a new access token and a new refresh
+     * token. The previous refresh token and its access token are revoked.
+     *
+     * @unauthenticated
+     *
+     * @bodyParam refresh_token string required Refresh token returned by the login, register or refresh endpoint. Example: def50200a1b2c3d4e5f6...
+     *
+     * @response status=200 scenario="Token refreshed" {
+     *   "status": "OK",
+     *   "message": null,
+     *   "data": {
+     *     "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...",
+     *     "refresh_token": "def50200a1b2c3d4e5f6...",
+     *     "token_type": "Bearer",
+     *     "expires_in": 3600
+     *   }
+     * }
+     * @response status=401 scenario="Invalid refresh token" {
+     *   "status": "error",
+     *   "message": "Invalid or expired refresh token",
+     *   "data": null
+     * }
+     * @response status=422 scenario="Validation error" {
+     *   "status": "error",
+     *   "message": null,
+     *   "data": {
+     *     "refresh_token": [
+     *       "The refresh token field is required."
+     *     ]
+     *   }
+     * }
+     */
+    public function refreshToken(RefreshTokenData $data, RefreshTokenLogic $logic): JsonResponse
     {
         return $logic->run($data);
     }

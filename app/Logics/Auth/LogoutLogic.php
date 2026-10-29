@@ -6,6 +6,7 @@ use AxoloteSource\Logics\Data\EmptyData;
 use AxoloteSource\Logics\Logics\Logic;
 use AxoloteSource\Logics\Traits\OnlyWithAction;
 use Illuminate\Http\JsonResponse;
+use Laravel\Passport\RefreshTokenRepository;
 
 class LogoutLogic extends Logic
 {
@@ -19,6 +20,9 @@ class LogoutLogic extends Logic
     protected function action(): Logic
     {
         $token = auth()->user()->token();
+
+        app(RefreshTokenRepository::class)->revokeRefreshTokensByAccessTokenId($token->id);
+
         $token->revoke();
 
         return $this;
