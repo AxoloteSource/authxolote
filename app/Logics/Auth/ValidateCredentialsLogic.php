@@ -22,7 +22,7 @@ class ValidateCredentialsLogic extends Logic
     protected function action(): Logic
     {
         $this->setResponse([
-            'valid' => auth()->validate([
+            'valid' => auth('web')->validate([
                 'email' => $this->input->email,
                 'password' => $this->input->password,
             ]),
