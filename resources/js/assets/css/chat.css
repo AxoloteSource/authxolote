@@ -1,5 +1,0 @@
-@media (min-width: 640px) {
-  .sm\:h-\[calc\(100vh_-_300px\)\] {
-    height: calc(100vh - 300px);
-  }
-}

@@ -1,13 +1,12 @@
 # Authxolote - Sistema de Autenticación y Gestión de Roles
 
-Authxolote es una API robusta construida con Laravel 12 que proporciona un sistema de gestión de autenticación, roles y permisos (RBAC) listo para usar. Utiliza Laravel Passport para la emisión de tokens OAuth2 y un sistema dinámico llamado "Flow" para la gestión de recursos.
+Authxolote es una API robusta construida con Laravel 12 que proporciona un sistema de gestión de autenticación, roles y permisos (RBAC) listo para usar. Utiliza Laravel Passport para la emisión de tokens OAuth2 y un sistema dinámico llamado "Flow" para la gestión de recursos. Es una API sin frontend.
 
 ## 🚀 Requisitos Previos
 
 - PHP >= 8.4
 - Composer
 - MySQL / PostgreSQL / SQLite
-- Node.js & NPM (opcional, para compilación de assets si fuera necesario)
 
 ## 🛠️ Instalación y Configuración
 
@@ -33,9 +32,6 @@ Sigue estos pasos para poner en marcha el proyecto:
    - `ROOT_USER_NAME`: El nombre del usuario root.
    - `ROOT_USER_EMAIL`: El correo electrónico del usuario root.
    - `ROOT_USER_PASSWORD`: La contraseña para el usuario root.
-
-   **Variables de entorno del frontend (Backoffice):**
-   - `VITE_MENU_SLUG`: El slug del menú que se renderiza en el Backoffice mediante el componente `MenuV2`. Debe coincidir con el `slug` de un menú existente en la base de datos (ej. `auth`).
 
    **Variables de entorno para el envío de OTP:**
    Los códigos OTP se envían de forma asíncrona mediante el servicio externo Messages. Configura:
