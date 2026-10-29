@@ -13,10 +13,14 @@ use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         then: function (Application $app) {
+            Route::get('/', fn () => Response::json([
+                'name' => config('app.name'),
+                'status' => 'ok',
+            ]));
+
             Route::prefix('/api/v1')
                 ->middleware(['setHeaders', 'api', 'transaction'])
                 ->group(base_path('routes/api.php'));

@@ -1,11 +1,6 @@
 x-build: &build
   context: .
   dockerfile: Dockerfile
-  args:
-    VITE_APP_NAME: ${VITE_APP_NAME:-Authxolote}
-    VITE_APP_URL: ${VITE_APP_URL:-http://localhost:8081}
-    VITE_AUTH_URL: ${VITE_AUTH_URL:-http://localhost:8081}
-    VITE_MENU_SLUG: ${VITE_MENU_SLUG:-auth}
 
 x-environment: &environment
   APP_ENV: ${APP_ENV:-production}

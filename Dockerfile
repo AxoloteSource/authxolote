@@ -1,36 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---------------------------------------------------------------------------
-# 1) Frontend assets (Vite + pnpm)
-# ---------------------------------------------------------------------------
-FROM node:22-bookworm-slim AS assets
-
-RUN corepack enable && corepack prepare pnpm@9 --activate
-
-WORKDIR /app
-
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
-
-COPY resources ./resources
-COPY public ./public
-COPY vite.config.ts tsconfig.json ./
-
-ARG VITE_APP_NAME
-ARG VITE_APP_URL
-ARG VITE_AUTH_URL
-ARG VITE_MENU_SLUG
-
-ENV VITE_APP_NAME=$VITE_APP_NAME \
-    VITE_APP_URL=$VITE_APP_URL \
-    VITE_AUTH_URL=$VITE_AUTH_URL \
-    VITE_MENU_SLUG=$VITE_MENU_SLUG
-
-RUN pnpm build
-
-
-# ---------------------------------------------------------------------------
-# 2) PHP dependencies (Composer, no dev)
+# 1) PHP dependencies (Composer, no dev)
 # ---------------------------------------------------------------------------
 FROM dunglas/frankenphp:php8.4-trixie AS vendor
 
@@ -56,7 +27,7 @@ RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
 
 
 # ---------------------------------------------------------------------------
-# 3) Runtime image (FrankenPHP)
+# 2) Runtime image (FrankenPHP)
 # ---------------------------------------------------------------------------
 FROM dunglas/frankenphp:php8.4-trixie AS app
 
@@ -65,7 +36,6 @@ RUN install-php-extensions pdo_mysql
 WORKDIR /app
 
 COPY --from=vendor /app /app
-COPY --from=assets /app/public/build /app/public/build
 
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
