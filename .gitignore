@@ -14,6 +14,7 @@ auth.json
 /.idea
 /.vscode
 /.zed
+Local.session.sql
 
 #Variables de entorno
 firebase_authentication.json
@@ -31,3 +32,6 @@ _ide_helper_models.php
 # Scribe API documentation (generated at deploy time)
 /.scribe
 /public/docs
+
+# Issues locales (no versionados)
+/issues/

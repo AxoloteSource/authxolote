@@ -5,6 +5,7 @@ namespace App\Rules;
 use App\Models\Setting;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 use Illuminate\Validation\Rules\Password;
 
 class AuthPasswordRule implements ValidationRule
@@ -12,7 +13,7 @@ class AuthPasswordRule implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

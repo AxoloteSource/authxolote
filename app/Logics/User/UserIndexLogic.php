@@ -6,6 +6,7 @@ use App\Http\Resources\User\UserIndexResource;
 use App\Models\User;
 use AxoloteSource\Logics\Data\IndexData;
 use AxoloteSource\Logics\Logics\IndexLogic;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 
@@ -21,7 +22,7 @@ class UserIndexLogic extends IndexLogic
         return parent::logic($input);
     }
 
-    public function makeQuery(): \Illuminate\Database\Eloquent\Builder
+    public function makeQuery(): Builder
     {
         return $this->model->newQuery()->with('role');
     }

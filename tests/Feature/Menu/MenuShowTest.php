@@ -22,6 +22,7 @@ class MenuShowTest extends TestCase
         $response->assertJsonPath('data.id', $menu->id);
         $response->assertJsonPath('data.slug', $menu->slug);
         $response->assertJsonPath('data.name', $menu->name);
+        $response->assertJsonPath('data.size', $menu->size->value);
     }
 
     public function test_it_returns_the_menu_items_as_a_tree(): void

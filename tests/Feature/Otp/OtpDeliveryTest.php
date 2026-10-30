@@ -8,6 +8,7 @@ use App\Delivery\MessagesOtpSender;
 use App\Enums\OtpChannel;
 use App\Enums\OtpDeliveryStatus;
 use App\Enums\OtpPurpose;
+use App\Exceptions\Otp\OtpException;
 use App\Jobs\SendOtpJob;
 use App\Models\OtpChallenge;
 use App\Models\OtpDelivery;
@@ -110,7 +111,7 @@ class OtpDeliveryTest extends TestCase
     {
         config(['services.messages.base_url' => null]);
 
-        $this->expectException(\App\Exceptions\Otp\OtpException::class);
+        $this->expectException(OtpException::class);
 
         app(MessagesOtpSender::class)->send(OtpChannel::Whatsapp, '+5213121234567', '483921', OtpPurpose::Login);
     }

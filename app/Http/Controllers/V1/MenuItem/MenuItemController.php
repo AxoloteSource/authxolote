@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\MenuItem;
 
 use App\Data\MenuItem\MenuItemDeleteData;
+use App\Data\MenuItem\MenuItemReorderData;
 use App\Data\MenuItem\MenuItemShowData;
 use App\Data\MenuItem\MenuItemStoreData;
 use App\Data\MenuItem\MenuItemUpdateData;
@@ -10,6 +11,7 @@ use App\Data\MenuItem\UpdateMenuItemRoleData;
 use App\Http\Controllers\Controller;
 use App\Logics\MenuItem\MenuItemDeleteLogic;
 use App\Logics\MenuItem\MenuItemIndexLogic;
+use App\Logics\MenuItem\MenuItemReorderLogic;
 use App\Logics\MenuItem\MenuItemRoleUpdateLogic;
 use App\Logics\MenuItem\MenuItemShowLogic;
 use App\Logics\MenuItem\MenuItemStoreLogic;
@@ -142,7 +144,7 @@ class MenuItemController extends Controller
      *
      * @bodyParam menu_id string required Identifier of the menu that owns the item. Example: 0195f51e-4a37-7087-b5f7-57d001537aba
      * @bodyParam parent_id string optional Identifier of the parent menu item. Example: null
-     * @bodyParam type string required Type of the item. Allowed values: header, link. Example: link
+     * @bodyParam type string required Type of the item. Allowed values: header, link, section. Example: link
      * @bodyParam name string required Display name of the item. Example: Users
      * @bodyParam slug string required Unique slug of the item. Example: users
      * @bodyParam route string optional Frontend route name. Example: users.index
@@ -197,7 +199,7 @@ class MenuItemController extends Controller
      *
      * @bodyParam menu_id string required Identifier of the menu that owns the item. Example: 0195f51e-4a37-7087-b5f7-57d001537aba
      * @bodyParam parent_id string optional Identifier of the parent menu item. Example: null
-     * @bodyParam type string required Type of the item. Allowed values: header, link. Example: link
+     * @bodyParam type string required Type of the item. Allowed values: header, link, section. Example: link
      * @bodyParam name string required Display name of the item. Example: Users
      * @bodyParam slug string required Unique slug of the item. Example: users
      * @bodyParam route string optional Frontend route name. Example: users.index
@@ -235,6 +237,39 @@ class MenuItemController extends Controller
      * }
      */
     public function update(MenuItemUpdateData $data, MenuItemUpdateLogic $logic): JsonResponse
+    {
+        return $logic->run($data);
+    }
+
+    /**
+     * Reorder the menu items of a menu.
+     *
+     * The payload must include every item of the menu. Each item defines its
+     * new parent (or `null` for a root item) and its position among its
+     * siblings. Positions are normalized to consecutive integers.
+     *
+     * @authenticated
+     *
+     * @bodyParam menu_id string required Identifier of the menu. Example: 0195f51e-4a37-7087-b5f7-57d001537aba
+     * @bodyParam items object[] required Flat list with every menu item and its new position.
+     * @bodyParam items[].id string required Identifier of the menu item. Example: 0195f51e-4a37-7087-b5f7-57d001537abb
+     * @bodyParam items[].parent_id string optional Identifier of the new parent, or null for a root item. Example: null
+     * @bodyParam items[].sort_order int required Position among its siblings. Example: 0
+     *
+     * @response status=200 scenario="Menu reordered" {
+     *   "status": "OK",
+     *   "message": null,
+     *   "data": {
+     *     "reordered": 3
+     *   }
+     * }
+     * @response status=422 scenario="Invalid hierarchy" {
+     *   "status": "error",
+     *   "message": "The menu item hierarchy contains a cycle.",
+     *   "data": null
+     * }
+     */
+    public function reorder(MenuItemReorderData $data, MenuItemReorderLogic $logic): JsonResponse
     {
         return $logic->run($data);
     }

@@ -217,6 +217,7 @@ class MenuController extends Controller
      * @bodyParam name string required Name of the menu. Example: Settings
      * @bodyParam slug string required Unique slug of the menu. Example: settings
      * @bodyParam icon string optional Icon identifier of the menu. Example: settings
+     * @bodyParam size string optional Visual size of the menu. Allowed values: sm, md, lg. Defaults to md. Example: md
      * @bodyParam sort_order int optional Position of the menu in the application. Defaults to 0. Example: 0
      * @bodyParam active boolean optional Whether the menu is active. Defaults to true. Example: true
      *
@@ -263,6 +264,7 @@ class MenuController extends Controller
      * @bodyParam name string required Name of the menu. Example: Settings
      * @bodyParam slug string required Unique slug of the menu. Example: settings
      * @bodyParam icon string optional Icon identifier of the menu. Example: settings
+     * @bodyParam size string optional Visual size of the menu. Allowed values: sm, md, lg. Defaults to md. Example: md
      * @bodyParam sort_order int optional Position of the menu in the application. Example: 0
      * @bodyParam active boolean optional Whether the menu is active. Example: true
      *
@@ -320,9 +322,15 @@ class MenuController extends Controller
      * the menu and its menu items from the given tree. Existing menu items are
      * reused by slug; the roles of each item are synced when provided.
      *
+     * When `force` is true, the existing menu and all of its items are deleted
+     * and recreated from scratch. Roles, item order and any manual change are
+     * lost, and items without roles inherit the roles of their parent.
+     *
      * @authenticated
      *
      * @bodyParam name string required Name of the menu. The slug is generated from this value. Example: Settings
+     * @bodyParam size string optional Visual size of the menu. Allowed values: sm, md, lg. Defaults to md. Example: md
+     * @bodyParam force boolean optional Delete and recreate the existing menu. Defaults to false. Example: false
      * @bodyParam application object required Application that owns the menu.
      * @bodyParam application.name string required Name of the application. Example: Backoffice
      * @bodyParam application.slug string required Unique slug of the application. Example: backoffice

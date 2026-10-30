@@ -43,6 +43,7 @@ return [
         'auth.menu_items.store' => 'actions.menu_items_store',
         'auth.menu_items.show' => 'actions.menu_items_show',
         'auth.menu_items.update' => 'actions.menu_items_update',
+        'auth.menu_items.reorder' => 'actions.menu_items_reorder',
         'auth.menu_items.roles.update' => 'actions.menu_items_roles_update',
         'auth.menu_items.destroy' => 'actions.menu_items_destroy',
         'auth.user-lists.index' => 'actions.user_lists_index',

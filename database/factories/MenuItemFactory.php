@@ -4,10 +4,11 @@ namespace Database\Factories;
 
 use App\Enums\MenuItemType;
 use App\Models\Menu;
+use App\Models\MenuItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MenuItem>
+ * @extends Factory<MenuItem>
  */
 class MenuItemFactory extends Factory
 {
@@ -40,6 +41,15 @@ class MenuItemFactory extends Factory
     {
         return $this->state([
             'type' => MenuItemType::Link,
+        ]);
+    }
+
+    public function section(): static
+    {
+        return $this->state([
+            'type' => MenuItemType::Section,
+            'route' => null,
+            'path' => null,
         ]);
     }
 }

@@ -22,6 +22,7 @@ class MenuShowResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'icon' => $this->icon,
+            'size' => $this->size?->value,
             'sort_order' => $this->sort_order,
             'active' => $this->active,
             'items' => $this->whenLoaded('items', fn () => MenuItemShowResource::collection(
