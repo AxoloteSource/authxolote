@@ -19,6 +19,7 @@ class MenuStoreTest extends TestCase
             'name' => 'Main Menu',
             'slug' => 'main-menu',
             'icon' => 'Menu',
+            'size' => 'sm',
         ]);
 
         $response->assertStatus(201);
@@ -26,6 +27,27 @@ class MenuStoreTest extends TestCase
             'application_id' => $application->id,
             'name' => 'Main Menu',
             'slug' => 'main-menu',
+            'size' => 'sm',
+        ]);
+        $response->assertJsonPath('data.size', 'sm');
+    }
+
+    public function test_it_defaults_the_menu_size_to_md(): void
+    {
+        $this->loginRoot();
+
+        $application = Application::factory()->create();
+
+        $response = $this->postJson('/api/v1/menus', [
+            'application_id' => $application->id,
+            'name' => 'Main Menu',
+            'slug' => 'main-menu',
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('menus', [
+            'slug' => 'main-menu',
+            'size' => 'md',
         ]);
     }
 

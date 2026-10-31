@@ -45,6 +45,9 @@ class LoginTest extends TestCase
                     ],
                 ],
                 'access_token',
+                'refresh_token',
+                'token_type',
+                'expires_in',
             ],
         ]);
 
@@ -66,5 +69,7 @@ class LoginTest extends TestCase
         $this->assertArrayNotHasKey('password', $userData, 'El campo password no debe estar presente en la respuesta del usuario');
 
         $this->assertArrayHasKey('access_token', $responseData, 'El token de acceso no está presente en la respuesta');
+        $this->assertArrayHasKey('refresh_token', $responseData, 'El refresh token no está presente en la respuesta');
+        $this->assertArrayHasKey('expires_in', $responseData, 'La expiración del token no está presente en la respuesta');
     }
 }

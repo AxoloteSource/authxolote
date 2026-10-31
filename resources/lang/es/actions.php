@@ -30,6 +30,7 @@ return [
     'menu_items_store' => 'Crear ítems de menú',
     'menu_items_show' => 'Ver ítems de menú',
     'menu_items_update' => 'Actualizar ítems de menú',
+    'menu_items_reorder' => 'Reordenar ítems de menú',
     'menu_items_roles_update' => 'Asignar o quitar un rol de un ítem de menú',
     'menu_items_destroy' => 'Eliminar ítems de menú',
     'user_lists_index' => 'Listar listas de usuarios',

@@ -7,6 +7,7 @@ use App\Delivery\FakeOtpSender;
 use App\Delivery\MessagesOtpSender;
 use AxoloteSource\Logics\Responses\ResponseMacros;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Passport::enablePasswordGrant();
+
         ResponseMacros::register();
     }
 }

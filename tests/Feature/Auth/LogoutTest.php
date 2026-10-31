@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use App\Enums\RoleEnum;
 use App\Models\User;
+use Laravel\Passport\Token;
 use Tests\TestCase;
 
 class LogoutTest extends TestCase
@@ -34,6 +35,30 @@ class LogoutTest extends TestCase
 
         $this->assertDatabaseHas('oauth_access_tokens', [
             'id' => $accessToken->token->id,
+            'revoked' => true,
+        ]);
+    }
+
+    public function test_logout_revokes_the_refresh_tokens()
+    {
+        $user = User::factory()->create();
+
+        $login = $this->postJson('/api/v1/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertOk()->json('data');
+
+        $token = Token::query()
+            ->where('user_id', $user->id)
+            ->latest('created_at')
+            ->first();
+
+        $this->withHeaders([
+            'Authorization' => 'Bearer '.$login['access_token'],
+        ])->postJson('/api/v1/logout')->assertOk();
+
+        $this->assertDatabaseHas('oauth_refresh_tokens', [
+            'access_token_id' => $token->id,
             'revoked' => true,
         ]);
     }

@@ -48,6 +48,44 @@ class MenuItemUpdateTest extends TestCase
         $response->assertStatus(422);
     }
 
+    public function test_it_can_update_an_item_to_a_section(): void
+    {
+        $this->loginRoot();
+
+        $item = MenuItem::factory()->header()->create();
+
+        $response = $this->putJson('/api/v1/menu-items/'.$item->id, [
+            'menu_id' => $item->menu_id,
+            'type' => 'section',
+            'name' => 'Salamandr IA',
+            'slug' => $item->slug,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('menu_items', [
+            'id' => $item->id,
+            'type' => 'section',
+        ]);
+    }
+
+    public function test_it_rejects_a_section_item_with_route(): void
+    {
+        $this->withExceptionHandling();
+        $this->loginRoot();
+
+        $item = MenuItem::factory()->header()->create();
+
+        $response = $this->putJson('/api/v1/menu-items/'.$item->id, [
+            'menu_id' => $item->menu_id,
+            'type' => 'section',
+            'name' => 'Salamandr IA',
+            'slug' => $item->slug,
+            'route' => 'ia.index',
+        ]);
+
+        $response->assertStatus(422);
+    }
+
     public function test_it_returns_not_found_when_menu_item_does_not_exist(): void
     {
         $this->withExceptionHandling();

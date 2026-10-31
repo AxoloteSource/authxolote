@@ -101,6 +101,18 @@ class SettingSeeder extends Seeder
                 'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
                 'group' => 'auth',
             ],
+            [
+                'name' => 'access_token_expires_in_minutes',
+                'value' => '60',
+                'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
+                'group' => 'auth',
+            ],
+            [
+                'name' => 'refresh_token_expires_in_minutes',
+                'value' => '43200',
+                'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
+                'group' => 'auth',
+            ],
         ];
 
         foreach ($settings as $setting) {

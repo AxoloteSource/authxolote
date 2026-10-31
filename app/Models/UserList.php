@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\UserListFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ class UserList extends Model
 {
     public const string SLUG_ALL_USERS = 'all-users';
 
-    /** @use HasFactory<\Database\Factories\UserListFactory> */
+    /** @use HasFactory<UserListFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [

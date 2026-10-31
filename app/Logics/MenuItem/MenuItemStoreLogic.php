@@ -38,16 +38,16 @@ class MenuItemStoreLogic extends StoreLogic
 
     private function validateType(): bool
     {
-        if ($this->input->type->isHeader()) {
-            if (filled($this->input->route) || filled($this->input->path)) {
-                return $this->error('Header items must not have a route or path.');
+        if ($this->input->type->isLink()) {
+            if (blank($this->input->route) && blank($this->input->path)) {
+                return $this->error(__('Link items must have a route or a path.'));
             }
 
             return true;
         }
 
-        if (blank($this->input->route) && blank($this->input->path)) {
-            return $this->error('Link items must have a route or a path.');
+        if (filled($this->input->route) || filled($this->input->path)) {
+            return $this->error(__('Header and section items must not have a route or path.'));
         }
 
         return true;

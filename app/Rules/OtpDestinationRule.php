@@ -5,13 +5,14 @@ namespace App\Rules;
 use App\Enums\OtpChannel;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 class OtpDestinationRule implements ValidationRule
 {
     public function __construct(protected ?OtpChannel $channel) {}
 
     /**
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

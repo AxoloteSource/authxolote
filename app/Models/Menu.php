@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MenuSize;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,11 +19,13 @@ class Menu extends Model
         'name',
         'slug',
         'icon',
+        'size',
         'sort_order',
         'active',
     ];
 
     protected $casts = [
+        'size' => MenuSize::class,
         'active' => 'boolean',
         'sort_order' => 'integer',
     ];

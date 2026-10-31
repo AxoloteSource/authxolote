@@ -30,6 +30,7 @@ return [
     'menu_items_store' => 'Create menu items',
     'menu_items_show' => 'Show menu items',
     'menu_items_update' => 'Update menu items',
+    'menu_items_reorder' => 'Reorder menu items',
     'menu_items_roles_update' => 'Attach or detach a role from a menu item',
     'menu_items_destroy' => 'Delete menu items',
     'user_lists_index' => 'List user lists',

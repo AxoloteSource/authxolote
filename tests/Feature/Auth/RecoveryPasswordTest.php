@@ -4,6 +4,8 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class RecoveryPasswordTest extends TestCase
@@ -34,7 +36,7 @@ class RecoveryPasswordTest extends TestCase
 
     public function test_unauthenticated_user_gets_success_response_with_non_existent_email()
     {
-        $initialCount = \Illuminate\Support\Facades\DB::table('otps')->count();
+        $initialCount = DB::table('otps')->count();
 
         $response = $this->postJson('/api/v1/recovery-password', [
             'email' => 'nonexistent@example.com',
@@ -90,7 +92,7 @@ class RecoveryPasswordTest extends TestCase
             $this->postJson('/api/v1/recovery-password', [
                 'email' => 'not-an-email',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $this->assertArrayHasKey('email', $e->errors());
 
             return;
