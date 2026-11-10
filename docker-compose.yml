@@ -40,6 +40,9 @@ services:
       - "${APP_PORT:-8081}:80"
     environment: *environment
     extra_hosts: *extra-hosts
+    networks:
+      - default
+      - coolify
     volumes:
       - storage:/app/storage
 
@@ -51,6 +54,9 @@ services:
     command: ["queue:work", "--tries=1", "--max-time=3600", "--sleep=3"]
     environment: *environment
     extra_hosts: *extra-hosts
+    networks:
+      - default
+      - coolify
     volumes:
       - storage:/app/storage
     healthcheck:
@@ -67,6 +73,9 @@ services:
   #   command: ["schedule:work"]
   #   environment: *environment
   #   extra_hosts: *extra-hosts
+  #   networks:
+  #     - default
+  #     - coolify
   #   volumes:
   #     - storage:/app/storage
   #   healthcheck:
@@ -74,6 +83,10 @@ services:
   #   depends_on:
   #     app:
   #       condition: service_healthy
+
+networks:
+  coolify:
+    external: true
 
 volumes:
   storage:
