@@ -47,7 +47,6 @@ services:
       - storage:/app/storage
 
   worker:
-    build: *build
     image: authxolote
     restart: unless-stopped
     entrypoint: ["php", "artisan"]
