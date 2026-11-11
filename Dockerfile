@@ -35,7 +35,7 @@ RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
 # ---------------------------------------------------------------------------
 FROM dunglas/frankenphp:php8.4-trixie AS app
 
-RUN install-php-extensions pdo_mysql
+RUN install-php-extensions pdo_mysql redis
 
 WORKDIR /app
 
