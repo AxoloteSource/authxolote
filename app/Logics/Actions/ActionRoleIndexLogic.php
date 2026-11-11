@@ -2,11 +2,11 @@
 
 namespace App\Logics\Actions;
 
+use App\Http\Resources\Actions\RoleActionResource;
+use App\Models\Action;
 use AxoloteSource\Logics\Classes\Filter;
 use AxoloteSource\Logics\Data\IndexData;
 use AxoloteSource\Logics\Logics\IndexLogic;
-use App\Http\Resources\Actions\RoleActionResource;
-use App\Models\Action;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -35,6 +35,7 @@ class ActionRoleIndexLogic extends IndexLogic
         $query->withExists(['roles as active' => function ($query) {
             $query->where('role_id', $this->input->id);
         }]);
+
         return $query;
     }
 
@@ -43,7 +44,7 @@ class ActionRoleIndexLogic extends IndexLogic
         return RoleActionResource::collection($this->response);
     }
 
-    function searchActive(Filter $filter): void
+    public function searchActive(Filter $filter): void
     {
         $this->queryBuilder->having('active', '=', filter_var($filter->value, FILTER_VALIDATE_BOOLEAN));
     }
@@ -51,8 +52,8 @@ class ActionRoleIndexLogic extends IndexLogic
     protected function customFilters(): array
     {
         return [
-            'active' => fn(Filter $filter) => $this->searchActive($filter),
-            'name' => fn(Filter $filter) => $this->queryBuilder->where('name', 'like', "%{$filter->value}%"),
+            'active' => fn (Filter $filter) => $this->searchActive($filter),
+            'name' => fn (Filter $filter) => $this->queryBuilder->where('name', 'like', "%{$filter->value}%"),
         ];
     }
 

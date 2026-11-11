@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\Action;
+use App\Models\ActionRoleOverride;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ActionRoleOverride>
+ * @extends Factory<ActionRoleOverride>
  */
 class ActionRoleOverrideFactory extends Factory
 {

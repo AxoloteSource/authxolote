@@ -57,6 +57,29 @@ class MenuItemStoreTest extends TestCase
         ]);
     }
 
+    public function test_it_can_create_a_section_item(): void
+    {
+        $this->loginRoot();
+
+        $menu = $this->createMenu();
+        $slug = fake()->unique()->slug();
+
+        $response = $this->postJson('/api/v1/menu-items', [
+            'menu_id' => $menu->id,
+            'type' => 'section',
+            'name' => 'Salamandr IA',
+            'slug' => $slug,
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('menu_items', [
+            'menu_id' => $menu->id,
+            'name' => 'Salamandr IA',
+            'slug' => $slug,
+            'type' => 'section',
+        ]);
+    }
+
     public function test_it_requires_slug(): void
     {
         $this->withExceptionHandling();
@@ -102,6 +125,24 @@ class MenuItemStoreTest extends TestCase
         $response = $this->postJson('/api/v1/menu-items', [
             'menu_id' => $menu->id,
             'type' => 'header',
+            'name' => 'Inicio',
+            'slug' => fake()->unique()->slug(),
+            'path' => '/home',
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_it_rejects_a_section_item_with_path(): void
+    {
+        $this->withExceptionHandling();
+        $this->loginRoot();
+
+        $menu = $this->createMenu();
+
+        $response = $this->postJson('/api/v1/menu-items', [
+            'menu_id' => $menu->id,
+            'type' => 'section',
             'name' => 'Inicio',
             'slug' => fake()->unique()->slug(),
             'path' => '/home',

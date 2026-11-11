@@ -12,7 +12,7 @@ class IsAllow
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, string $action): Response
     {
@@ -20,7 +20,7 @@ class IsAllow
             if ($request->expectsJson()) {
                 return \Illuminate\Support\Facades\Response::json([
                     'message' => __('You do not have permission to access this resource'),
-                    'data' => ['action' => $action]
+                    'data' => ['action' => $action],
                 ], Http::Forbidden->value);
             }
 

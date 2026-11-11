@@ -2,10 +2,10 @@
 
 namespace App\Logics\Auth;
 
+use App\Http\Resources\Auth\MeResource;
 use AxoloteSource\Logics\Data\EmptyData;
 use AxoloteSource\Logics\Logics\Logic;
 use AxoloteSource\Logics\Traits\OnlyWithAction;
-use App\Http\Resources\Auth\MeResource;
 use Illuminate\Http\JsonResponse;
 
 class MeLogic extends Logic

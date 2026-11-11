@@ -11,6 +11,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class LoginResource extends JsonResource
 {
+    /**
+     * @param  array<string, mixed>  $tokens
+     */
+    public function __construct(User $resource, private array $tokens)
+    {
+        parent::__construct($resource);
+    }
+
     public function toArray(Request $request): array
     {
         return [
@@ -26,7 +34,10 @@ class LoginResource extends JsonResource
                 'updated_at' => $this->updated_at,
                 'role' => $this->role,
             ],
-            'access_token' => $this->createToken('access_token')->accessToken,
+            'access_token' => $this->tokens['access_token'] ?? null,
+            'refresh_token' => $this->tokens['refresh_token'] ?? null,
+            'token_type' => $this->tokens['token_type'] ?? 'Bearer',
+            'expires_in' => $this->tokens['expires_in'] ?? null,
         ];
     }
 }

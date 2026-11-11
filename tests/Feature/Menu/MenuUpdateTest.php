@@ -18,13 +18,16 @@ class MenuUpdateTest extends TestCase
             'application_id' => $menu->application_id,
             'name' => 'Updated Menu',
             'slug' => $menu->slug,
+            'size' => 'lg',
         ]);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('menus', [
             'id' => $menu->id,
             'name' => 'Updated Menu',
+            'size' => 'lg',
         ]);
+        $response->assertJsonPath('data.size', 'lg');
     }
 
     public function test_it_returns_not_found_when_menu_does_not_exist(): void

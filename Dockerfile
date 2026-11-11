@@ -1,48 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---------------------------------------------------------------------------
-# 1) Frontend assets (Vite + pnpm)
-# ---------------------------------------------------------------------------
-FROM node:22-bookworm-slim AS assets
-
-RUN corepack enable && corepack prepare pnpm@9 --activate
-
-WORKDIR /app
-
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
-
-COPY resources ./resources
-COPY public ./public
-COPY vite.config.ts tsconfig.json ./
-
-ARG VITE_APP_NAME
-ARG VITE_APP_URL
-ARG VITE_AUTH_URL
-ARG VITE_MENU_SLUG=auth
-ARG VITE_DEBUG_ERRORS=false
-ARG VITE_REVERB_APP_KEY
-ARG VITE_REVERB_HOST
-ARG VITE_REVERB_PORT
-ARG VITE_REVERB_SCHEME
-
-ENV VITE_APP_NAME=$VITE_APP_NAME \
-    VITE_APP_URL=$VITE_APP_URL \
-    VITE_AUTH_URL=$VITE_AUTH_URL \
-    VITE_MENU_SLUG=$VITE_MENU_SLUG \
-    VITE_DEBUG_ERRORS=$VITE_DEBUG_ERRORS \
-    VITE_REVERB_APP_KEY=$VITE_REVERB_APP_KEY \
-    VITE_REVERB_HOST=$VITE_REVERB_HOST \
-    VITE_REVERB_PORT=$VITE_REVERB_PORT \
-    VITE_REVERB_SCHEME=$VITE_REVERB_SCHEME
-
-RUN pnpm build
-
-
-# ---------------------------------------------------------------------------
-# 2) PHP dependencies (Composer, no dev)
-#    GITHUB_TOKEN: Personal Access Token con acceso a repos privados
-#    de AxoloteSource. Se usa solo en build, nunca queda en la imagen final.
+# 1) PHP dependencies (Composer, no dev)
 # ---------------------------------------------------------------------------
 FROM dunglas/frankenphp:php8.4-trixie AS vendor
 
@@ -71,9 +30,8 @@ COPY . .
 RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
     && php artisan package:discover --ansi
 
-
 # ---------------------------------------------------------------------------
-# 3) Runtime image (FrankenPHP)
+# 2) Runtime image (FrankenPHP)
 # ---------------------------------------------------------------------------
 FROM dunglas/frankenphp:php8.4-trixie AS app
 
@@ -82,7 +40,6 @@ RUN install-php-extensions pdo_mysql
 WORKDIR /app
 
 COPY --from=vendor /app /app
-COPY --from=assets /app/public/build /app/public/build
 
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

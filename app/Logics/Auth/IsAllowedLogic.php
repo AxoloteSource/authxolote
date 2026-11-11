@@ -2,9 +2,9 @@
 
 namespace App\Logics\Auth;
 
+use App\Data\Auth\IsAllowedData;
 use AxoloteSource\Logics\Logics\Logic;
 use AxoloteSource\Logics\Traits\OnlyWithAction;
-use App\Data\Auth\IsAllowedData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;

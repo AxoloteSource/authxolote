@@ -5,7 +5,6 @@ namespace Tests\Feature\ActionRole;
 use App\Models\Action;
 use App\Models\ActionRole;
 use App\Models\Role;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ActionRoleIndexTest extends TestCase
@@ -16,7 +15,7 @@ class ActionRoleIndexTest extends TestCase
         $action = Action::factory()->create();
         $role = Role::factory()->create();
         $role->actions()->attach($action);
-        $response = $this->get("/api/v1/roles/{$role->id}/actions");
+        $response = $this->get("/api/v1/roles/{$role->id}/actions?limit=100");
         $response->assertStatus(206);
         $response->assertJsonStructure([
             'data' => [
@@ -45,7 +44,7 @@ class ActionRoleIndexTest extends TestCase
         $unassignedActions = Action::factory()->count(2)->create();
 
         $role->actions()->attach($assignedActions->pluck('id'));
-        $response = $this->get("/api/v1/roles/{$role->id}/actions");
+        $response = $this->get("/api/v1/roles/{$role->id}/actions?limit=100");
         $response->assertStatus(206);
 
         $data = $response->json('data');
@@ -112,9 +111,9 @@ class ActionRoleIndexTest extends TestCase
     {
         $this->loginAdmin()->attachAction(['auth.role.actions.index']);
         $role = Role::factory()->create();
-        //unassigned actions
+        // unassigned actions
         Action::factory()->count(2)->create();
-        //assigned actions
+        // assigned actions
         $assignedActions = Action::factory()->count(5)->create();
         $role->actions()->attach($assignedActions->pluck('id'));
         $response = $this->get("/api/v1/roles/{$role->id}/actions?filters[1][property]=active&filters[1][value]=true");
@@ -133,9 +132,9 @@ class ActionRoleIndexTest extends TestCase
     {
         $this->loginAdmin()->attachAction(['auth.role.actions.index']);
         $role = Role::factory()->create();
-        //unassigned actions
+        // unassigned actions
         Action::factory()->count(10)->create();
-        //assigned actions
+        // assigned actions
         $response = $this->get("/api/v1/roles/{$role->id}/actions?filters[1][property]=active&filters[1][value]=false");
         $response->assertStatus(206);
         $data = $response->json('data');

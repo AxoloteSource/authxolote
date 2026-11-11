@@ -13,6 +13,9 @@ Route::controller(MenuItemController::class)->group(function () {
     Route::get('{id}', 'show')
         ->middleware('isAllow:auth.menu_items.show');
 
+    Route::put('reorder', 'reorder')
+        ->middleware('isAllow:auth.menu_items.reorder');
+
     Route::put('{id}', 'update')
         ->middleware('isAllow:auth.menu_items.update');
 

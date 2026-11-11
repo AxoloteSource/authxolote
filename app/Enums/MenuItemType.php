@@ -6,6 +6,7 @@ enum MenuItemType: string
 {
     case Header = 'header';
     case Link = 'link';
+    case Section = 'section';
 
     public function isHeader(): bool
     {
@@ -15,5 +16,10 @@ enum MenuItemType: string
     public function isLink(): bool
     {
         return $this === self::Link;
+    }
+
+    public function isSection(): bool
+    {
+        return $this === self::Section;
     }
 }

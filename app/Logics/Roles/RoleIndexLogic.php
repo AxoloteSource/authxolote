@@ -2,9 +2,9 @@
 
 namespace App\Logics\Roles;
 
+use App\Models\Role;
 use AxoloteSource\Logics\Data\IndexData;
 use AxoloteSource\Logics\Logics\IndexLogic;
-use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 

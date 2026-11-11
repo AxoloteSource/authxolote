@@ -2,11 +2,11 @@
 
 namespace App\Logics\Flow;
 
-use AxoloteSource\Logics\Logics\Flow\FlowUpdateLogicBase;
 use App\Data\Actions\UpdateActionData;
 use App\Data\Role\UpdateRoleData;
 use App\Models\Action;
 use App\Models\Role;
+use AxoloteSource\Logics\Logics\Flow\FlowUpdateLogicBase;
 
 class FlowUpdateLogic extends FlowUpdateLogicBase
 {

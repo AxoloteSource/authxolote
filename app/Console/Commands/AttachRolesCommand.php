@@ -27,7 +27,11 @@ class AttachRolesCommand extends Command
      */
     public function handle(): int
     {
-        $roles = config('actions', []);
+        $roles = collect(config('actions', []))
+            ->map(fn (array $actions): array => collect($actions)
+                ->map(fn (string $value, int|string $key): string => is_string($key) ? __($value) : $value)
+                ->all())
+            ->all();
 
         if (empty($roles)) {
             $this->error('No se encontraron roles en el archivo de configuración.');

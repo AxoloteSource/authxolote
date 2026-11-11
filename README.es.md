@@ -1,13 +1,12 @@
 # Authxolote - Sistema de Autenticación y Gestión de Roles
 
-Authxolote es una API robusta construida con Laravel 12 que proporciona un sistema de gestión de autenticación, roles y permisos (RBAC) listo para usar. Utiliza Laravel Passport para la emisión de tokens OAuth2 y un sistema dinámico llamado "Flow" para la gestión de recursos.
+Authxolote es una API robusta construida con Laravel 12 que proporciona un sistema de gestión de autenticación, roles y permisos (RBAC) listo para usar. Utiliza Laravel Passport para la emisión de tokens OAuth2 y un sistema dinámico llamado "Flow" para la gestión de recursos. Es una API sin frontend.
 
 ## 🚀 Requisitos Previos
 
 - PHP >= 8.4
 - Composer
 - MySQL / PostgreSQL / SQLite
-- Node.js & NPM (opcional, para compilación de assets si fuera necesario)
 
 ## 🛠️ Instalación y Configuración
 
@@ -34,8 +33,15 @@ Sigue estos pasos para poner en marcha el proyecto:
    - `ROOT_USER_EMAIL`: El correo electrónico del usuario root.
    - `ROOT_USER_PASSWORD`: La contraseña para el usuario root.
 
-   **Variables de entorno del frontend (Backoffice):**
-   - `VITE_MENU_SLUG`: El slug del menú que se renderiza en el Backoffice mediante el componente `MenuV2`. Debe coincidir con el `slug` de un menú existente en la base de datos (ej. `auth`).
+   **Variables de entorno para el envío de OTP:**
+   Los códigos OTP se envían de forma asíncrona mediante el servicio externo Messages. Configura:
+   - `OTP_DELIVERY_DRIVER`: Driver de envío. Usa `messages` (por defecto) para enviar a través del servicio Messages, o `fake` para solo registrar los códigos enviados (útil para desarrollo local y pruebas).
+   - `MESSAGES_BASE_URL`: URL base del servicio Messages. Es obligatoria cuando se usa el driver `messages`.
+   - `MESSAGES_OTP_ENDPOINT`: Ruta del endpoint que recibe los mensajes. Por defecto `/messages`.
+   - `MESSAGES_TOKEN`: Token Bearer utilizado para autenticarse contra el servicio Messages.
+   - `MESSAGES_TIMEOUT`: Tiempo de espera HTTP en segundos para las peticiones al servicio Messages. Por defecto `10`.
+
+   Si `MESSAGES_BASE_URL` está vacío, el envío de OTP falla con el mensaje `The messages service is not configured.`.
 
    Genera la clave de la aplicación:
    ```bash
@@ -84,6 +90,7 @@ Todas las APIs se encuentran bajo el prefijo `/api/v1`.
 | Método | Endpoint | Descripción | Parámetros | Respuesta | Requiere Auth |
 |---|---|---|---|---|---------------|
 | POST | `/login` | Inicia sesión y devuelve un token de Passport. | `email`, `password` | Datos del usuario + `access_token` | No            |
+| POST | `/validate-credentials` | Valida credenciales sin emitir un token de Passport. Requiere la acción `auth.validate-credentials`. | `email`, `password` | `{"valid": bool}` | Sí            |
 | POST | `/register` | Registra un nuevo usuario. | `name`, `email`, `password`, `password_confirmation`, `role_key` | Datos del usuario | No            |
 | POST | `/logout` | Revoca el token de acceso actual. | Ninguno | `{"message": "Logged out"}` | Sí            |
 | POST | `/me` | Obtiene la información del usuario autenticado. | Ninguno | Datos del usuario + `role` | Sí            |

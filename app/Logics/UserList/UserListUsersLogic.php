@@ -48,7 +48,7 @@ class UserListUsersLogic extends IndexLogic
             return User::query();
         }
 
-        return $this->list->users()->getQuery();
+        return User::query()->whereIn('users.id', $this->list->users()->select('users.id'));
     }
 
     protected function getColumnSearch(): string

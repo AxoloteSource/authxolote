@@ -19,6 +19,7 @@ class MenuIndexResource extends JsonResource
             'slug' => $this->slug,
             'application' => $this->whenLoaded('application', fn () => $this->application?->name),
             'items_count' => $this->items_count,
+            'size' => $this->size?->value,
             'active' => $this->active,
             'created_at' => $this->created_at,
         ];

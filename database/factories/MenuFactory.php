@@ -2,11 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Enums\MenuSize;
 use App\Models\Application;
+use App\Models\Menu;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Menu>
+ * @extends Factory<Menu>
  */
 class MenuFactory extends Factory
 {
@@ -17,6 +19,7 @@ class MenuFactory extends Factory
             'name' => $this->faker->unique()->word(),
             'slug' => $this->faker->unique()->slug(),
             'icon' => $this->faker->optional()->word(),
+            'size' => MenuSize::Md,
             'sort_order' => $this->faker->numberBetween(0, 10),
             'active' => true,
         ];

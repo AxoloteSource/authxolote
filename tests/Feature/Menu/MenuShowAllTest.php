@@ -12,7 +12,7 @@ class MenuShowAllTest extends TestCase
 {
     public function test_it_returns_all_menu_items_regardless_of_role(): void
     {
-        $this->loginAdmin();
+        $this->loginAdmin()->attachAction(['auth.menus.show_all']);
 
         $menu = Menu::factory()->create();
         $linked = MenuItem::factory()->create(['menu_id' => $menu->id]);
@@ -29,7 +29,7 @@ class MenuShowAllTest extends TestCase
 
     public function test_it_flags_items_without_the_requested_role(): void
     {
-        $this->loginAdmin();
+        $this->loginAdmin()->attachAction(['auth.menus.show_all']);
 
         $menu = Menu::factory()->create();
         $linked = MenuItem::factory()->create(['menu_id' => $menu->id]);
@@ -53,7 +53,7 @@ class MenuShowAllTest extends TestCase
 
     public function test_it_flags_all_items_as_visible_without_role(): void
     {
-        $this->loginAdmin();
+        $this->loginAdmin()->attachAction(['auth.menus.show_all']);
 
         $menu = Menu::factory()->create();
         $item = MenuItem::factory()->create(['menu_id' => $menu->id]);

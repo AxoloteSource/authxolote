@@ -20,7 +20,6 @@ class RegisterData extends Data
         public ?string $role_id,
     ) {
         $this->role_id = Role::where('key', $this->role_key)->first()->id;
-        $this->password = bcrypt($this->password);
     }
 
     public static function rules(): array

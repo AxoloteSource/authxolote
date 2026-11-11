@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Role;
 use App\Models\User;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -37,7 +39,7 @@ class ChangePasswordTest extends TestCase
         $this->withoutExceptionHandling();
         try {
             $this->postJson('/api/v1/change-password');
-        } catch (\Illuminate\Auth\AuthenticationException $e) {
+        } catch (AuthenticationException $e) {
             $this->assertEquals('Unauthenticated.', $e->getMessage());
 
             return;
@@ -48,7 +50,7 @@ class ChangePasswordTest extends TestCase
 
     public function test_user_without_permission_cannot_request_password_change()
     {
-        $role = \App\Models\Role::factory()->create(['id' => '00000000-0000-0000-0000-000000000002']); // Un ID que no sea Root
+        $role = Role::factory()->create(['id' => '00000000-0000-0000-0000-000000000002']); // Un ID que no sea Root
         $user = User::factory()->create(['role_id' => $role->id]);
 
         $response = $this->actingAs($user, 'api')

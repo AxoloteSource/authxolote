@@ -35,4 +35,23 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Messages Service
+    |--------------------------------------------------------------------------
+    |
+    | Credentials used by the OTP delivery implementation to hand messages to
+    | the external Messages service. Messages is only responsible for the
+    | delivery, never for storing or validating the OTP.
+    |
+    */
+
+    'messages' => [
+        'driver' => env('OTP_DELIVERY_DRIVER', 'messages'),
+        'base_url' => env('MESSAGES_BASE_URL'),
+        'endpoint' => env('MESSAGES_OTP_ENDPOINT', '/messages'),
+        'token' => env('MESSAGES_TOKEN'),
+        'timeout' => (int) env('MESSAGES_TIMEOUT', 10),
+    ],
+
 ];

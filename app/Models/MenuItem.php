@@ -67,6 +67,11 @@ class MenuItem extends Model
         return $this->type?->isLink() ?? false;
     }
 
+    public function isSection(): bool
+    {
+        return $this->type?->isSection() ?? false;
+    }
+
     public function isVisibleTo(?string $roleId): bool
     {
         if ($roleId === RoleEnum::Root->value) {
