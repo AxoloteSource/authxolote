@@ -19,7 +19,7 @@ class MeLogic extends Logic
 
     protected function action(): Logic
     {
-        $this->model = $this->user();
+        $this->model = $this->user()->load(['role', 'userType']);
 
         return $this;
     }

@@ -46,7 +46,7 @@ class LoginShowLogic extends ShowLogic
 
     protected function makeQuery(): Builder
     {
-        return User::searchByEmail($this->input->email);
+        return User::searchByEmail($this->input->email)->with(['role', 'userType']);
     }
 
     protected function withResource(): array|Model|JsonResource

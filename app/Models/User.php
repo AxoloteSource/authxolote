@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\RoleEnum;
+use App\Enums\UserTypeEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,12 +21,17 @@ class User extends Authenticatable
         'name',
         'email',
         'role_id',
+        'user_type_id',
         'password',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $attributes = [
+        'user_type_id' => UserTypeEnum::Human->value,
     ];
 
     protected function casts(): array
@@ -39,6 +45,11 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function userType(): BelongsTo
+    {
+        return $this->belongsTo(UserType::class);
     }
 
     public function otps(): HasMany

@@ -48,5 +48,9 @@ return [
     'change_password' => 'Change user password',
     'reset_password' => 'Reset user password',
     'validate_credentials' => 'Validate user credentials',
+    'personal_access_tokens_index' => 'List personal access tokens',
+    'personal_access_tokens_store' => 'Create personal access tokens',
+    'personal_access_tokens_revoke' => 'Revoke personal access tokens',
+    'personal_access_tokens_destroy' => 'Delete personal access tokens',
 
 ];

@@ -14,6 +14,8 @@ class UserStoreData extends Data
         public string $email,
         #[Rule('required|exists:roles,id')]
         public string $role_id,
+        #[Rule('nullable|uuid|exists:user_types,id')]
+        public ?string $user_type_id,
         #[Rule('required|string|min:8')]
         public string $password,
     ) {}

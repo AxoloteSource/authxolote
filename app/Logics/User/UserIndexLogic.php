@@ -24,7 +24,7 @@ class UserIndexLogic extends IndexLogic
 
     public function makeQuery(): Builder
     {
-        return $this->model->newQuery()->with('role');
+        return $this->model->newQuery()->with(['role', 'userType']);
     }
 
     protected function getColumnSearch(): string

@@ -61,6 +61,10 @@ return [
         'auth.change-password' => 'actions.change_password',
         'auth.reset-password' => 'actions.reset_password',
         'auth.validate-credentials' => 'actions.validate_credentials',
+        'auth.personal-access-tokens.index' => 'actions.personal_access_tokens_index',
+        'auth.personal-access-tokens.store' => 'actions.personal_access_tokens_store',
+        'auth.personal-access-tokens.revoke' => 'actions.personal_access_tokens_revoke',
+        'auth.personal-access-tokens.destroy' => 'actions.personal_access_tokens_destroy',
     ],
 
 ];

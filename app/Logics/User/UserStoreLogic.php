@@ -3,6 +3,7 @@
 namespace App\Logics\User;
 
 use App\Data\User\UserStoreData;
+use App\Enums\UserTypeEnum;
 use App\Http\Resources\User\UserShowResource;
 use App\Models\User;
 use AxoloteSource\Logics\Logics\StoreLogic;
@@ -26,8 +27,15 @@ class UserStoreLogic extends StoreLogic
         return parent::logic($input);
     }
 
+    protected function before(): bool
+    {
+        $this->input->user_type_id ??= UserTypeEnum::Human->value;
+
+        return true;
+    }
+
     protected function withResource(): UserShowResource
     {
-        return new UserShowResource($this->model->load('role'));
+        return new UserShowResource($this->model->load(['role', 'userType']));
     }
 }
