@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------------
 FROM dunglas/frankenphp:php8.4-trixie AS vendor
 
-RUN install-php-extensions zip redis
+RUN install-php-extensions zip gd
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
