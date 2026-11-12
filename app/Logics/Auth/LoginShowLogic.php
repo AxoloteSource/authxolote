@@ -6,6 +6,7 @@ use App\Data\Auth\LoginData;
 use App\Http\Resources\Auth\LoginResource;
 use App\Models\User;
 use App\Services\OAuthTokenService;
+use AxoloteSource\Logics\Enums\Http;
 use AxoloteSource\Logics\Logics\ShowLogic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +38,10 @@ class LoginShowLogic extends ShowLogic
 
     protected function before(): bool
     {
+        if ($this->model->isBanned()) {
+            return $this->error(__('Your account has been banned.'), status: Http::Forbidden);
+        }
+
         if (! $this->validCredentials()) {
             return false;
         }
@@ -46,7 +51,7 @@ class LoginShowLogic extends ShowLogic
 
     protected function makeQuery(): Builder
     {
-        return User::searchByEmail($this->input->email);
+        return User::searchByEmail($this->input->email)->with(['role', 'userType']);
     }
 
     protected function withResource(): array|Model|JsonResource

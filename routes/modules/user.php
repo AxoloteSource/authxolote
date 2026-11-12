@@ -6,4 +6,6 @@ use Illuminate\Support\Facades\Route;
 Route::controller(UserController::class)->group(function () {
     Route::get('/', 'index')->middleware('isAllow:users.index');
     Route::post('/', 'store')->middleware('isAllow:users.store');
+    Route::delete('{id}', 'destroy')->middleware('isAllow:users.destroy');
+    Route::put('{id}/ban', 'ban')->middleware('isAllow:users.ban');
 });

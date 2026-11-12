@@ -95,6 +95,23 @@ protected function withResource(): mixed
 #### 7. Custom Filters with `customFilters()`
 Allows defining specific filtering logic that is not a simple "equals" or "like". It receives a callback with the filter instance.
 
+> **Filtering rule:** Do not add ad-hoc properties to `IndexData` (or create custom Data classes) just to filter. Use the existing `filters` request parameter. Simple columns are handled by the base `IndexLogic`; for relations or computed values, register the key in `customFilters()`.
+>
+> ```php
+> protected function customFilters(): array
+> {
+>     return [
+>         'user_type' => function (Filter $filter) {
+>             $this->queryBuilder->whereHas('userType', function ($query) use ($filter) {
+>                 $query->where('key', $filter->value);
+>             });
+>         },
+>     ];
+> }
+> ```
+>
+> Request: `GET /api/v1/users?filters[0][property]=user_type&filters[0][value]=app`
+
 ```php
 protected function customFilters(): array
 {

@@ -17,6 +17,7 @@ class MeResource extends JsonResource
             'user' => [
                 'id' => $this->id,
                 'role_id' => $this->role_id,
+                'user_type_id' => $this->user_type_id,
                 'name' => $this->name,
                 'email' => $this->email,
                 'email_verified_at' => $this->email_verified_at,
@@ -25,6 +26,7 @@ class MeResource extends JsonResource
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
                 'role' => $this->role,
+                'user_type' => $this->userType,
             ],
         ];
     }

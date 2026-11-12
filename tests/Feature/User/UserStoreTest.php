@@ -3,9 +3,11 @@
 namespace Tests\Feature\User;
 
 use App\Enums\RoleEnum;
+use App\Enums\UserTypeEnum;
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class UserStoreTest extends TestCase
@@ -27,10 +29,54 @@ class UserStoreTest extends TestCase
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
             'role_id' => RoleEnum::Admin->value,
+            'user_type_id' => UserTypeEnum::Human->value,
         ]);
 
         $this->assertTrue(Hash::check('password123', User::where('email', 'jane@example.com')->first()->password));
         $this->assertSame('Jane Doe', $response->json('data.name'));
+        $this->assertSame(UserTypeEnum::Human->value, $response->json('data.user_type_id'));
+    }
+
+    public function test_it_can_create_an_app_user(): void
+    {
+        $this->loginRoot();
+
+        $response = $this->postJson('/api/v1/users', [
+            'name' => 'Service App',
+            'email' => 'service@example.com',
+            'role_id' => RoleEnum::Messages->value,
+            'user_type_id' => UserTypeEnum::App->value,
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Service App',
+            'email' => 'service@example.com',
+            'role_id' => RoleEnum::Messages->value,
+            'user_type_id' => UserTypeEnum::App->value,
+        ]);
+
+        $this->assertSame(UserTypeEnum::App->value, $response->json('data.user_type_id'));
+        $this->assertSame('app', $response->json('data.user_type.key'));
+    }
+
+    public function test_it_rejects_an_invalid_user_type(): void
+    {
+        $this->withExceptionHandling();
+        $this->loginRoot();
+
+        $response = $this->postJson('/api/v1/users', [
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
+            'role_id' => RoleEnum::Admin->value,
+            'user_type_id' => Str::uuid(),
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('status', 'error');
     }
 
     public function test_it_requires_name(): void

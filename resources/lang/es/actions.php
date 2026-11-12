@@ -40,6 +40,8 @@ return [
     'user_lists_destroy' => 'Eliminar listas de usuarios',
     'users_index' => 'Listar usuarios',
     'users_store' => 'Crear usuarios',
+    'users_destroy' => 'Eliminar usuarios',
+    'users_ban' => 'Banear o desbanear usuarios',
     'flow_index' => 'Listar registros de flujo',
     'flow_store' => 'Crear registros de flujo',
     'flow_show' => 'Ver registros de flujo',
@@ -48,5 +50,9 @@ return [
     'change_password' => 'Cambiar contraseña del usuario',
     'reset_password' => 'Restablecer contraseña del usuario',
     'validate_credentials' => 'Validar credenciales del usuario',
+    'personal_access_tokens_index' => 'Listar tokens de acceso personal',
+    'personal_access_tokens_store' => 'Crear tokens de acceso personal',
+    'personal_access_tokens_revoke' => 'Revocar tokens de acceso personal',
+    'personal_access_tokens_destroy' => 'Eliminar tokens de acceso personal',
 
 ];
