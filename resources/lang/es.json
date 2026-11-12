@@ -35,6 +35,7 @@
   "Too many OTP requests. Please try again later.": "Demasiadas solicitudes de OTP. Por favor, inténtelo de nuevo más tarde.",
   "Invalid token.": "Token inválido.",
   "Invalid credentials": "Credenciales inválidas",
+  "Your account has been banned.": "Tu cuenta ha sido baneada.",
   "Invalid or expired refresh token": "Token de actualización inválido o expirado",
   "Unable to issue access token": "No se pudo emitir el token de acceso",
   "This OTP has already been used.": "Este OTP ya ha sido utilizado.",

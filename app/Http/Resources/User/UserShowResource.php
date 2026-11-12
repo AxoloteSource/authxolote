@@ -29,6 +29,7 @@ class UserShowResource extends JsonResource
                 'key' => $this->userType->key,
             ]),
             'email_verified_at' => $this->email_verified_at,
+            'banned_at' => $this->banned_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

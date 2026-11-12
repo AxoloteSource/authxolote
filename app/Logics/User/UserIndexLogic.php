@@ -4,6 +4,7 @@ namespace App\Logics\User;
 
 use App\Http\Resources\User\UserIndexResource;
 use App\Models\User;
+use AxoloteSource\Logics\Classes\Filter;
 use AxoloteSource\Logics\Data\IndexData;
 use AxoloteSource\Logics\Logics\IndexLogic;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,12 +33,24 @@ class UserIndexLogic extends IndexLogic
         return 'email';
     }
 
+    protected function customFilters(): array
+    {
+        return [
+            'user_type' => function (Filter $filter) {
+                $this->queryBuilder->whereHas('userType', function ($query) use ($filter) {
+                    $query->where('key', $filter->value);
+                });
+            },
+        ];
+    }
+
     public function tableHeaders(): array
     {
         return [
             'name' => __('Nombre'),
             'email' => __('Email'),
             'role' => __('Rol'),
+            'user_type_name' => __('Tipo de usuario'),
             'created_at' => __('Fecha de registro'),
             'actions' => __('Acciones'),
         ];

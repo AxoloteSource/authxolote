@@ -72,4 +72,18 @@ class LoginTest extends TestCase
         $this->assertArrayHasKey('refresh_token', $responseData, 'El refresh token no está presente en la respuesta');
         $this->assertArrayHasKey('expires_in', $responseData, 'La expiración del token no está presente en la respuesta');
     }
+
+    public function test_banned_user_cannot_login()
+    {
+        $user = User::factory()->create(['email' => 'banned-login@example.com']);
+        $user->forceFill(['banned_at' => now()])->save();
+
+        $response = $this->postJson('/api/v1/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(403);
+        $response->assertJsonPath('message', 'Your account has been banned.');
+    }
 }

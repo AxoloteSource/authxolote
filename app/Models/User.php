@@ -38,6 +38,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'banned_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -50,6 +51,11 @@ class User extends Authenticatable
     public function userType(): BelongsTo
     {
         return $this->belongsTo(UserType::class);
+    }
+
+    public function isBanned(): bool
+    {
+        return ! is_null($this->banned_at);
     }
 
     public function otps(): HasMany

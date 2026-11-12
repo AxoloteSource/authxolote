@@ -53,6 +53,8 @@ return [
         'auth.user-lists.destroy' => 'actions.user_lists_destroy',
         'users.index' => 'actions.users_index',
         'users.store' => 'actions.users_store',
+        'users.destroy' => 'actions.users_destroy',
+        'users.ban' => 'actions.users_ban',
         'auth.flow.index' => 'actions.flow_index',
         'auth.flow.store' => 'actions.flow_store',
         'auth.flow.show' => 'actions.flow_show',
