@@ -47,7 +47,7 @@ class AuthController extends Controller
      * @bodyParam email string required Unique email address of the user. Example: jane.doe@example.com
      * @bodyParam password string required Password of the user. Minimum length and complexity are defined in the system settings. Example: Password123!
      * @bodyParam password_confirmation string required Confirmation of the password. Must match `password`. Example: Password123!
-     * @bodyParam role_key string required Key of the role assigned to the new user. Example: admin
+     * @bodyParam role_key string required Key of the role assigned to the new user. Only a root caller may use `root`. Example: admin
      *
      * @response status=201 scenario="User registered" {
      *   "status": "OK",
@@ -80,6 +80,11 @@ class AuthController extends Controller
      *   "data": {
      *     "action": "auth.register"
      *   }
+     * }
+     * @response status=403 scenario="Root role assignment forbidden" {
+     *   "status": "error",
+     *   "message": "You may not assign the root role.",
+     *   "data": null
      * }
      * @response status=422 scenario="Validation error" {
      *   "status": "error",
