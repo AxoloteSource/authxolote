@@ -11,7 +11,8 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::controller(AuthController::class)->middleware(['auth:api', 'notBanned'])->group(function () {
-    Route::post('register', 'register');
+    Route::post('register', 'register')
+        ->middleware('isAllow:auth.register');
     Route::post('validate-credentials', 'validateCredentials')
         ->middleware(['throttle:10,1', 'isAllow:auth.validate-credentials']);
     Route::post('logout', 'logout');

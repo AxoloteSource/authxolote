@@ -60,6 +60,7 @@ return [
         'auth.flow.show' => 'actions.flow_show',
         'auth.flow.update' => 'actions.flow_update',
         'auth.flow.delete' => 'actions.flow_delete',
+        'auth.register' => 'actions.register',
         'auth.change-password' => 'actions.change_password',
         'auth.reset-password' => 'actions.reset_password',
         'auth.validate-credentials' => 'actions.validate_credentials',

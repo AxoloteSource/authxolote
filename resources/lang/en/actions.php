@@ -47,6 +47,7 @@ return [
     'flow_show' => 'Show flow records',
     'flow_update' => 'Update flow records',
     'flow_delete' => 'Delete flow records',
+    'register' => 'Register users',
     'change_password' => 'Change user password',
     'reset_password' => 'Reset user password',
     'validate_credentials' => 'Validate user credentials',
