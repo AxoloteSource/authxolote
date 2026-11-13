@@ -10,7 +10,8 @@ class RegisterStoreLogicTest extends TestCase
 {
     public function test_can_register(): void
     {
-        $user = User::factory()->create(['role_id' => RoleEnum::Root->value]);
+        $user = User::factory()->create(['role_id' => RoleEnum::Admin->value]);
+        $user->attachAction('auth.register');
         $faker = $this->faker;
         $name = $faker->firstName;
         $email = $faker->unique()->safeEmail;
