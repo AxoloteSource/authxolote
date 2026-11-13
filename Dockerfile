@@ -51,6 +51,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh \
         storage/framework/views \
         storage/logs \
         bootstrap/cache \
+        resources/views \
     && chmod -R ug+rwX storage bootstrap/cache
 
 EXPOSE 80 443 443/udp
