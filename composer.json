@@ -12,8 +12,8 @@
         "laravel/tinker": "^2.9",
         "laraveles/spanish": "^1.5",
         "spatie/laravel-data": "^4.11",
-        "knuckleswtf/scribe": "^5.11",
-    },
+        "knuckleswtf/scribe": "^5.11"
+    }
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.4",
         "fakerphp/faker": "^1.23",
