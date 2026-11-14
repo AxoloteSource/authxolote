@@ -28,8 +28,7 @@ class OtpStoreLogicTest extends TestCase
         ]);
 
         $otp = Otp::where('user_id', $user->id)->first();
-        $this->assertNotEquals(Setting::where('name', 'otp_length')->value('value'), strlen($otp->otp_code));
-        $this->assertTrue(strlen($otp->otp_code) > 30); // Bcrypt hashes are usually 60 chars
+        $this->assertGreaterThanOrEqual(60, strlen($otp->otp_code));
 
         $otpExpiresInMinutes = (int) Setting::where('name', 'otp_expires_in_minutes')->value('value');
         $expectedExpiration = now()->addMinutes($otpExpiresInMinutes);

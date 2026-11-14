@@ -56,7 +56,7 @@ class OtpStoreLogic extends StoreLogic
 
     protected function init(): void
     {
-        $this->otpLength = Setting::getOtpLength();
+        $this->otpLength = max(6, Setting::getOtpCodeDigits());
         $this->otpExpiresInMinutes = Setting::getOtpExpiresInMinutes();
         $this->otpMaxAttempts = Setting::getOtpMaxAttempts();
         $this->otpRetryAfterSeconds = Setting::getOtpRetryAfterSeconds();
@@ -93,10 +93,9 @@ class OtpStoreLogic extends StoreLogic
 
     private function generateOtpCode(int $length): string
     {
-        $characters = '0123456789';
         $code = '';
         for ($i = 0; $i < $length; $i++) {
-            $code .= $characters[rand(0, strlen($characters) - 1)];
+            $code .= (string) random_int(0, 9);
         }
 
         return $code;
