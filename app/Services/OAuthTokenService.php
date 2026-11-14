@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Models\Setting;
+use App\Models\User;
 use Laravel\Passport\Client;
 use Laravel\Passport\Passport;
+use Laravel\Passport\RefreshTokenRepository;
+use Laravel\Passport\Token;
 use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response as Psr7Response;
 use Nyholm\Psr7\ServerRequest;
@@ -42,6 +45,16 @@ class OAuthTokenService
             'client_secret' => $client->secret,
             'scope' => '',
         ]);
+    }
+
+    public function revokeAllUserTokens(User $user): void
+    {
+        $refreshTokens = app(RefreshTokenRepository::class);
+
+        $user->tokens()->each(function (Token $token) use ($refreshTokens): void {
+            $refreshTokens->revokeRefreshTokensByAccessTokenId($token->id);
+            $token->revoke();
+        });
     }
 
     /**

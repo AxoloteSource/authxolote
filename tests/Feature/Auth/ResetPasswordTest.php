@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Laravel\Passport\Token;
 use Tests\TestCase;
 
 class ResetPasswordTest extends TestCase
@@ -230,6 +231,95 @@ class ResetPasswordTest extends TestCase
 
         $response->assertStatus(422);
         $this->assertFalse(Hash::check('new_password123', $user->fresh()->password));
+    }
+
+    public function test_reset_password_revokes_existing_access_token()
+    {
+        $user = User::factory()->create([
+            'password' => bcrypt('old_password'),
+        ]);
+        $user->attachAction('auth.reset-password');
+
+        $login = $this->postJson('/api/v1/login', [
+            'email' => $user->email,
+            'password' => 'old_password',
+        ])->assertOk()->json('data');
+
+        $accessToken = Token::query()
+            ->where('user_id', $user->id)
+            ->latest('created_at')
+            ->firstOrFail();
+
+        $otpCode = '123456';
+        $token = (string) Str::uuid();
+
+        Otp::create([
+            'user_id' => $user->id,
+            'token' => $token,
+            'otp_code' => Hash::make($otpCode),
+            'expires_at' => now()->addMinutes(15),
+        ]);
+
+        $this->postJson('/api/v1/reset-password', [
+            'token' => $token,
+            'otp_code' => $otpCode,
+            'password' => 'new_password123',
+            'password_confirmation' => 'new_password123',
+        ])->assertStatus(200);
+
+        $this->assertDatabaseHas('oauth_access_tokens', [
+            'id' => $accessToken->id,
+            'revoked' => true,
+        ]);
+
+        $this->withExceptionHandling()
+            ->withToken($login['access_token'])
+            ->postJson('/api/v1/me')
+            ->assertStatus(401);
+    }
+
+    public function test_reset_password_revokes_existing_refresh_token()
+    {
+        $user = User::factory()->create([
+            'password' => bcrypt('old_password'),
+        ]);
+        $user->attachAction('auth.reset-password');
+
+        $login = $this->postJson('/api/v1/login', [
+            'email' => $user->email,
+            'password' => 'old_password',
+        ])->assertOk()->json('data');
+
+        $accessToken = Token::query()
+            ->where('user_id', $user->id)
+            ->latest('created_at')
+            ->firstOrFail();
+
+        $otpCode = '123456';
+        $token = (string) Str::uuid();
+
+        Otp::create([
+            'user_id' => $user->id,
+            'token' => $token,
+            'otp_code' => Hash::make($otpCode),
+            'expires_at' => now()->addMinutes(15),
+        ]);
+
+        $this->postJson('/api/v1/reset-password', [
+            'token' => $token,
+            'otp_code' => $otpCode,
+            'password' => 'new_password123',
+            'password_confirmation' => 'new_password123',
+        ])->assertStatus(200);
+
+        $this->assertDatabaseHas('oauth_refresh_tokens', [
+            'access_token_id' => $accessToken->id,
+            'revoked' => true,
+        ]);
+
+        $this->postJson('/api/v1/refresh-token', [
+            'refresh_token' => $login['refresh_token'],
+        ])->assertStatus(401);
     }
 
     public function test_reset_password_is_rate_limited()
