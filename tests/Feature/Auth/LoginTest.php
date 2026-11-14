@@ -151,7 +151,71 @@ class LoginTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertStatus(403);
-        $response->assertJsonPath('message', 'Your account has been banned.');
+        $response->assertStatus(422);
+        $response->assertJsonPath('message', 'Invalid credentials');
+    }
+
+    public function test_unknown_email_returns_generic_invalid_credentials(): void
+    {
+        $response = $this->postJson('/api/v1/login', [
+            'email' => 'unknown-login@example.com',
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('message', 'Invalid credentials');
+        $response->assertJsonPath('data', null);
+        $this->assertArrayNotHasKey('email', $response->json('data') ?? []);
+    }
+
+    public function test_soft_deleted_user_returns_generic_invalid_credentials(): void
+    {
+        $user = User::factory()->create(['email' => 'deleted-login@example.com']);
+        $user->delete();
+
+        $response = $this->postJson('/api/v1/login', [
+            'email' => 'deleted-login@example.com',
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('message', 'Invalid credentials');
+    }
+
+    public function test_unknown_email_and_wrong_password_return_the_same_response(): void
+    {
+        $user = User::factory()->create(['email' => 'known-login@example.com']);
+
+        $unknown = $this->postJson('/api/v1/login', [
+            'email' => 'unknown-login@example.com',
+            'password' => 'wrong-password',
+        ]);
+
+        $wrongPassword = $this->postJson('/api/v1/login', [
+            'email' => $user->email,
+            'password' => 'wrong-password',
+        ]);
+
+        $unknown->assertStatus(422);
+        $wrongPassword->assertStatus(422);
+
+        $this->assertSame($unknown->json(), $wrongPassword->json());
+    }
+
+    public function test_login_still_validates_email_format(): void
+    {
+        $this->withExceptionHandling();
+
+        $response = $this->postJson('/api/v1/login', [
+            'email' => 'not-an-email',
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonStructure([
+            'data' => [
+                'email',
+            ],
+        ]);
     }
 }

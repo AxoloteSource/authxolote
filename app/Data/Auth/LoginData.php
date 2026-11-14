@@ -8,7 +8,7 @@ use Spatie\LaravelData\Data;
 class LoginData extends Data
 {
     public function __construct(
-        #[Rule(['required', 'exists:users,email', 'email:rfc'])]
+        #[Rule(['required', 'email:rfc'])]
         public string $email,
         public string $password,
     ) {}
