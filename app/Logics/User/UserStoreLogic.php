@@ -3,9 +3,11 @@
 namespace App\Logics\User;
 
 use App\Data\User\UserStoreData;
+use App\Enums\RoleEnum;
 use App\Enums\UserTypeEnum;
 use App\Http\Resources\User\UserShowResource;
 use App\Models\User;
+use AxoloteSource\Logics\Enums\Http;
 use AxoloteSource\Logics\Logics\StoreLogic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -29,6 +31,13 @@ class UserStoreLogic extends StoreLogic
 
     protected function before(): bool
     {
+        if ($this->input->role_id === RoleEnum::Root->value && ! auth()->user()?->isRoot()) {
+            return $this->error(
+                __('You may not assign the root role.'),
+                status: Http::Forbidden
+            );
+        }
+
         $this->input->user_type_id ??= UserTypeEnum::Human->value;
 
         return true;

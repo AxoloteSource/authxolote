@@ -97,7 +97,7 @@ class UserController extends Controller
      *
      * @bodyParam name string required Full name of the user. Example: Jane Doe
      * @bodyParam email string required Unique email address of the user. Example: jane.doe@example.com
-     * @bodyParam role_id string required Identifier of the role assigned to the user. Example: 0195f51e-4a37-7087-b5f7-57d001537ab7
+     * @bodyParam role_id string required Identifier of the role assigned to the user. Only a root caller may use the root role. Example: 0195f51e-4a37-7087-b5f7-57d001537ab7
      * @bodyParam password string required Password of the user. Minimum length is 8 characters. Example: Password123!
      *
      * @response status=201 scenario="User created" {
@@ -116,6 +116,11 @@ class UserController extends Controller
      *     "created_at": "2026-01-15T10:00:00.000000Z",
      *     "updated_at": "2026-01-15T10:00:00.000000Z"
      *   }
+     * }
+     * @response status=403 scenario="Root role assignment forbidden" {
+     *   "status": "error",
+     *   "message": "You may not assign the root role.",
+     *   "data": null
      * }
      * @response status=422 scenario="Validation error" {
      *   "status": "error",
