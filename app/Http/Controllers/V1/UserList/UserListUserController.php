@@ -29,7 +29,7 @@ class UserListUserController extends Controller
      * @queryParam order string Sort direction. Allowed values: asc, desc. Example: asc
      * @queryParam order_by string Column used to sort the results. Example: name
      * @queryParam search string Free text search applied to the user name. Example: jane
-     * @queryParam filters string optional JSON-encoded list of filters. Each item must contain "property", "value" and optionally "operator". Example: [{"property":"name","value":"jane","operator":"="}]
+     * @queryParam filters string optional JSON-encoded list of filters. Each item must contain "property", "value" and optionally "operator". Filters on disallowed properties or operators return 422. Example: [{"property":"name","value":"jane","operator":"="}]
      *
      * @response status=206 scenario="Paginated users" {
      *   "current_page": 1,

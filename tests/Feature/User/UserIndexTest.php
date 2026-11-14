@@ -3,6 +3,7 @@
 namespace Tests\Feature\User;
 
 use App\Enums\UserTypeEnum;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
 use Tests\TestCase;
@@ -73,6 +74,47 @@ class UserIndexTest extends TestCase
         $this->assertSame(UserTypeEnum::App->value, $response->json('data.0.user_type_id'));
         $this->assertSame('App', $response->json('data.0.user_type_name'));
         $this->assertSame('app', $response->json('data.0.user_type.key'));
+    }
+
+    public function test_it_rejects_filters_on_hidden_columns(): void
+    {
+        $this->loginRoot();
+
+        User::factory()->count(2)->create();
+
+        $query = http_build_query([
+            'filters' => [
+                ['property' => 'deleted_email', 'value' => 'hidden@example.com', 'operator' => '='],
+            ],
+        ]);
+
+        $response = $this->getJson("/api/v1/users?{$query}");
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', __('The filter property ":property" is not allowed.', ['property' => 'deleted_email']))
+            ->assertJsonPath('data', null);
+    }
+
+    public function test_it_still_filters_by_exposed_role_id(): void
+    {
+        $this->loginRoot();
+
+        $role = Role::factory()->create();
+        $otherRole = Role::factory()->create();
+        $matching = User::factory()->create(['role_id' => $role->id]);
+        User::factory()->create(['role_id' => $otherRole->id]);
+
+        $query = http_build_query([
+            'filters' => [
+                ['property' => 'role_id', 'value' => $role->id, 'operator' => '='],
+            ],
+        ]);
+
+        $response = $this->getJson("/api/v1/users?{$query}");
+
+        $response->assertStatus(206);
+        $response->assertJsonCount(1, 'data');
+        $this->assertSame($matching->id, $response->json('data.0.id'));
     }
 
     public function test_it_requires_authentication(): void

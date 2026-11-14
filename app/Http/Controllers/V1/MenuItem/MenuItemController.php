@@ -41,7 +41,7 @@ class MenuItemController extends Controller
      * @queryParam order string Sort direction. Allowed values: asc, desc. Example: asc
      * @queryParam order_by string Column used to sort the results. Example: sort_order
      * @queryParam search string Free text search applied to the item name. Example: users
-     * @queryParam filters string optional JSON-encoded list of filters. Each item must contain "property", "value" and optionally "operator". Example: [{"property":"name","value":"jane","operator":"="}]
+     * @queryParam filters string optional JSON-encoded list of filters. Each item must contain "property", "value" and optionally "operator". Filters on disallowed properties or operators return 422. Example: [{"property":"name","value":"jane","operator":"="}]
      *
      * @response status=206 scenario="Paginated menu items" {
      *   "current_page": 1,

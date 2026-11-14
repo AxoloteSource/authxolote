@@ -59,6 +59,44 @@ class MenuItemIndexTest extends TestCase
         $response->assertJsonFragment(['name' => 'home']);
     }
 
+    public function test_it_rejects_filters_on_hidden_columns(): void
+    {
+        $this->loginRoot();
+
+        MenuItem::factory()->count(2)->create();
+
+        $query = http_build_query([
+            'filters' => [
+                ['property' => 'deleted_at', 'value' => now()->toDateTimeString(), 'operator' => '='],
+            ],
+        ]);
+
+        $response = $this->getJson("/api/v1/menu-items?{$query}");
+
+        $response->assertStatus(422)
+            ->assertJsonPath('message', __('The filter property ":property" is not allowed.', ['property' => 'deleted_at']))
+            ->assertJsonPath('data', null);
+    }
+
+    public function test_it_still_filters_by_exposed_columns(): void
+    {
+        $this->loginRoot();
+
+        MenuItem::factory()->create(['name' => 'Filtered Item']);
+
+        $query = http_build_query([
+            'filters' => [
+                ['property' => 'name', 'value' => 'Filtered Item', 'operator' => '='],
+            ],
+        ]);
+
+        $response = $this->getJson("/api/v1/menu-items?{$query}");
+
+        $response->assertStatus(206);
+        $response->assertJsonCount(1, 'data');
+        $this->assertSame('Filtered Item', $response->json('data.0.name'));
+    }
+
     public function test_it_requires_authentication(): void
     {
         $this->withoutExceptionHandling();

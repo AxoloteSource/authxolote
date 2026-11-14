@@ -13,6 +13,16 @@ use Spatie\LaravelData\Data;
 
 class UserIndexLogic extends IndexLogic
 {
+    /**
+     * @var array<int, string>
+     */
+    protected array $disallowedFilterProperties = [
+        'deleted_email',
+        'deleted_at',
+        'password',
+        'remember_token',
+    ];
+
     public function __construct(protected User $user)
     {
         parent::__construct($user);
