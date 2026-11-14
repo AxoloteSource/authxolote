@@ -326,6 +326,14 @@ class MenuController extends Controller
      * and recreated from scratch. Roles, item order and any manual change are
      * lost, and items without roles inherit the roles of their parent.
      *
+     * Requires `auth.menus.store` and `auth.menu_items.store`. Additional
+     * permissions are enforced depending on the payload:
+     * `auth.applications.store` to create the application,
+     * `auth.menu_items.roles.update` to assign roles,
+     * `auth.menus.update` and `auth.menu_items.update` to change an existing
+     * menu size or item type, and `auth.menus.destroy` plus
+     * `auth.menu_items.destroy` when `force` is true.
+     *
      * @authenticated
      *
      * @bodyParam name string required Name of the menu. The slug is generated from this value. Example: Settings
@@ -361,6 +369,13 @@ class MenuController extends Controller
      *     "name": [
      *       "The name field is required."
      *     ]
+     *   }
+     * }
+     * @response status=403 scenario="Missing dependent action" {
+     *   "status": "error",
+     *   "message": "You do not have permission to access this resource",
+     *   "data": {
+     *     "action": "auth.menu_items.roles.update"
      *   }
      * }
      */

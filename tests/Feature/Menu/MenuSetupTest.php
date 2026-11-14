@@ -6,6 +6,7 @@ use App\Models\Application;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -20,6 +21,39 @@ class MenuSetupTest extends TestCase
         MenuItem::query()->forceDelete();
         Menu::query()->forceDelete();
         Application::query()->forceDelete();
+    }
+
+    /**
+     * @param  array<int, string>  $actions
+     */
+    private function loginWithActions(array $actions): User
+    {
+        $user = $this->loginAdmin();
+        $user->attachAction($actions);
+
+        return $user;
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function setupPayload(array $overrides = []): array
+    {
+        return array_merge([
+            'name' => 'Test Menu',
+            'application' => [
+                'name' => 'Test App',
+                'slug' => 'test-app',
+            ],
+            'menu_items' => [
+                'home' => [
+                    'type' => 'link',
+                    'path' => '/',
+                    'icon' => 'House',
+                ],
+            ],
+        ], $overrides);
     }
 
     public function test_it_can_setup_a_menu_with_application_and_items(): void
@@ -850,5 +884,170 @@ class MenuSetupTest extends TestCase
 
         $this->assertDatabaseHas('menus', ['id' => $menu->id]);
         $this->assertDatabaseHas('menu_items', ['id' => $item->id]);
+    }
+
+    public function test_it_rejects_setup_with_only_menus_store(): void
+    {
+        $this->loginWithActions(['auth.menus.store']);
+
+        $this->postJson('/api/v1/menus/setup', $this->setupPayload())
+            ->assertStatus(403)
+            ->assertJsonPath('data.action', 'auth.menu_items.store');
+
+        $this->assertDatabaseCount('applications', 0);
+        $this->assertDatabaseCount('menus', 0);
+        $this->assertDatabaseCount('menu_items', 0);
+    }
+
+    public function test_it_rejects_creating_an_application_without_applications_store(): void
+    {
+        $this->loginWithActions([
+            'auth.menus.store',
+            'auth.menu_items.store',
+        ]);
+
+        $this->postJson('/api/v1/menus/setup', $this->setupPayload())
+            ->assertStatus(403)
+            ->assertJsonPath('data.action', 'auth.applications.store');
+
+        $this->assertDatabaseCount('applications', 0);
+        $this->assertDatabaseCount('menus', 0);
+    }
+
+    public function test_it_allows_reusing_an_existing_application_without_applications_store(): void
+    {
+        $application = Application::factory()->create([
+            'name' => 'Test App',
+            'slug' => 'test-app',
+        ]);
+
+        $this->loginWithActions([
+            'auth.menus.store',
+            'auth.menu_items.store',
+        ]);
+
+        $this->postJson('/api/v1/menus/setup', $this->setupPayload())
+            ->assertStatus(201);
+
+        $this->assertDatabaseHas('menus', [
+            'application_id' => $application->id,
+            'slug' => 'Test Menu',
+        ]);
+    }
+
+    public function test_it_rejects_role_assignment_without_the_roles_update_action(): void
+    {
+        $this->loginWithActions([
+            'auth.menus.store',
+            'auth.menu_items.store',
+            'auth.applications.store',
+        ]);
+
+        $payload = $this->setupPayload([
+            'menu_items' => [
+                'home' => [
+                    'type' => 'link',
+                    'path' => '/',
+                    'roles' => ['root'],
+                ],
+            ],
+        ]);
+
+        $this->postJson('/api/v1/menus/setup', $payload)
+            ->assertStatus(403)
+            ->assertJsonPath('data.action', 'auth.menu_items.roles.update');
+
+        $this->assertDatabaseCount('menus', 0);
+        $this->assertDatabaseCount('menu_items', 0);
+    }
+
+    public function test_it_rejects_force_without_the_destroy_actions(): void
+    {
+        $this->loginWithActions([
+            'auth.menus.store',
+            'auth.menu_items.store',
+            'auth.applications.store',
+        ]);
+
+        $this->postJson('/api/v1/menus/setup', $this->setupPayload(['force' => true]))
+            ->assertStatus(403)
+            ->assertJsonPath('data.action', 'auth.menus.destroy');
+
+        $this->assertDatabaseCount('menus', 0);
+    }
+
+    public function test_it_rejects_updating_the_menu_size_without_the_menu_update_action(): void
+    {
+        $this->loginWithActions([
+            'auth.menus.store',
+            'auth.menu_items.store',
+            'auth.applications.store',
+        ]);
+
+        $payload = $this->setupPayload(['size' => 'md']);
+
+        $this->postJson('/api/v1/menus/setup', $payload)->assertStatus(201);
+
+        $payload['size'] = 'lg';
+
+        $this->postJson('/api/v1/menus/setup', $payload)
+            ->assertStatus(403)
+            ->assertJsonPath('data.action', 'auth.menus.update');
+
+        $this->assertDatabaseHas('menus', [
+            'slug' => 'Test Menu',
+            'size' => 'md',
+        ]);
+    }
+
+    public function test_it_rejects_updating_a_menu_item_type_without_the_menu_item_update_action(): void
+    {
+        $this->loginWithActions([
+            'auth.menus.store',
+            'auth.menu_items.store',
+            'auth.applications.store',
+        ]);
+
+        $payload = $this->setupPayload([
+            'menu_items' => [
+                'home' => [
+                    'type' => 'header',
+                    'icon' => 'House',
+                ],
+            ],
+        ]);
+
+        $this->postJson('/api/v1/menus/setup', $payload)->assertStatus(201);
+
+        $this->assertDatabaseHas('menu_items', [
+            'slug' => 'home',
+            'type' => 'header',
+        ]);
+
+        $payload['menu_items']['home']['type'] = 'section';
+
+        $this->postJson('/api/v1/menus/setup', $payload)
+            ->assertStatus(403)
+            ->assertJsonPath('data.action', 'auth.menu_items.update');
+
+        $this->assertDatabaseHas('menu_items', [
+            'slug' => 'home',
+            'type' => 'header',
+        ]);
+    }
+
+    public function test_it_allows_setup_with_baseline_actions_and_no_roles(): void
+    {
+        $this->loginWithActions([
+            'auth.menus.store',
+            'auth.menu_items.store',
+            'auth.applications.store',
+        ]);
+
+        $this->postJson('/api/v1/menus/setup', $this->setupPayload())
+            ->assertStatus(201);
+
+        $this->assertDatabaseHas('menus', ['slug' => 'Test Menu']);
+        $this->assertDatabaseHas('menu_items', ['slug' => 'home']);
     }
 }
