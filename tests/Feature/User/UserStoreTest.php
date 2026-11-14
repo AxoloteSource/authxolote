@@ -170,4 +170,63 @@ class UserStoreTest extends TestCase
             'password' => 'password123',
         ]);
     }
+
+    public function test_non_root_with_store_action_cannot_create_root_user(): void
+    {
+        $admin = $this->loginAdmin();
+        $admin->attachAction('users.store');
+
+        $response = $this->postJson('/api/v1/users', [
+            'name' => 'Escalated Root',
+            'email' => 'escalated-root@example.com',
+            'role_id' => RoleEnum::Root->value,
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(403)
+            ->assertJsonPath('message', __('You may not assign the root role.'));
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'escalated-root@example.com',
+        ]);
+    }
+
+    public function test_root_can_create_root_user(): void
+    {
+        $this->loginRoot();
+
+        $response = $this->postJson('/api/v1/users', [
+            'name' => 'Second Root',
+            'email' => 'second-root@example.com',
+            'role_id' => RoleEnum::Root->value,
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'second-root@example.com',
+            'role_id' => RoleEnum::Root->value,
+        ]);
+    }
+
+    public function test_non_root_with_store_action_can_create_non_root_user(): void
+    {
+        $admin = $this->loginAdmin();
+        $admin->attachAction('users.store');
+
+        $response = $this->postJson('/api/v1/users', [
+            'name' => 'Regular Admin',
+            'email' => 'regular-admin@example.com',
+            'role_id' => RoleEnum::Admin->value,
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'regular-admin@example.com',
+            'role_id' => RoleEnum::Admin->value,
+        ]);
+    }
 }
