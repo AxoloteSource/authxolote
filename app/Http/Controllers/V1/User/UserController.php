@@ -159,6 +159,11 @@ class UserController extends Controller
      *   "message": "You cannot delete your own user.",
      *   "data": null
      * }
+     * @response status=403 scenario="Root user protected" {
+     *   "status": "error",
+     *   "message": "You may not delete the root user.",
+     *   "data": null
+     * }
      * @response status=403 scenario="Missing permission" {
      *   "message": "You do not have permission to access this resource",
      *   "data": {
@@ -199,6 +204,11 @@ class UserController extends Controller
      * @response status=422 scenario="Cannot ban your own user" {
      *   "status": "error",
      *   "message": "You cannot ban your own user.",
+     *   "data": null
+     * }
+     * @response status=403 scenario="Root user protected" {
+     *   "status": "error",
+     *   "message": "You may not ban the root user.",
      *   "data": null
      * }
      * @response status=403 scenario="Missing permission" {
