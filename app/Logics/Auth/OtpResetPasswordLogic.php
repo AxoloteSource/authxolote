@@ -5,6 +5,7 @@ namespace App\Logics\Auth;
 use App\Data\Auth\OtpResetPasswordData;
 use App\Models\Otp;
 use App\Models\Setting;
+use App\Services\OAuthTokenService;
 use AxoloteSource\Logics\Logics\UpdateLogic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -87,6 +88,8 @@ class OtpResetPasswordLogic extends UpdateLogic
         $user = $this->model->user;
         $user->password = $this->input->password;
         $user->save();
+
+        app(OAuthTokenService::class)->revokeAllUserTokens($user);
 
         $this->response = collect(['message' => __('Password reset successfully.')]);
 
