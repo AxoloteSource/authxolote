@@ -42,12 +42,6 @@ class SettingSeeder extends Seeder
                 'group' => 'auth',
             ],
             [
-                'name' => 'otp_length',
-                'value' => '4',
-                'setting_value_type_id' => SettingValueTypeEnum::Integer->value,
-                'group' => 'auth',
-            ],
-            [
                 'name' => 'otp_expires_in_minutes',
                 'value' => '15',
                 'setting_value_type_id' => SettingValueTypeEnum::Integer->value,

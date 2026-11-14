@@ -13,12 +13,12 @@ class SettingSeederTest extends TestCase
     public function test_existing_setting_values_are_not_overwritten(): void
     {
         Setting::query()
-            ->where('name', SettingEnum::OtpLength->value)
+            ->where('name', SettingEnum::OtpMaxAttempts->value)
             ->update(['value' => '8']);
 
         $this->seed(SettingSeeder::class);
 
-        $this->assertSame('8', Setting::findByKey(SettingEnum::OtpLength)?->value);
+        $this->assertSame('8', Setting::findByKey(SettingEnum::OtpMaxAttempts)?->value);
     }
 
     public function test_existing_setting_metadata_is_not_overwritten(): void

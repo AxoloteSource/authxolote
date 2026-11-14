@@ -4,6 +4,7 @@ namespace App\Logics\Auth;
 
 use App\Data\Auth\OtpResetPasswordData;
 use App\Models\Otp;
+use App\Models\Setting;
 use AxoloteSource\Logics\Logics\UpdateLogic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -49,14 +50,36 @@ class OtpResetPasswordLogic extends UpdateLogic
             return $this->error(__('This OTP has expired.'));
         }
 
-        // 4. Validar si el otp_code coincide
+        $maxAttempts = max(1, Setting::getOtpMaxAttempts());
+
+        // 4. Validar si el OTP alcanzó el máximo de intentos
+        if ($this->model->attempts >= $maxAttempts) {
+            return $this->error(__('Too many OTP attempts. Please request a new code.'));
+        }
+
+        // 5. Validar si el otp_code coincide
         if (! Hash::check($this->input->otp_code, $this->model->otp_code)) {
+            $this->model->increment('attempts');
+            $this->model->refresh();
+
+            if ($this->model->attempts >= $maxAttempts) {
+                $this->model->forceFill(['expires_at' => now()])->save();
+
+                return $this->error(__('Too many OTP attempts. Please request a new code.'));
+            }
+
             return $this->error(__('Invalid OTP code.'));
         }
 
-        $this->input->used_at = now();
-
         return true;
+    }
+
+    protected function action(): self
+    {
+        $this->model->forceFill(['used_at' => now()])->save();
+        $this->response = collect($this->model);
+
+        return $this;
     }
 
     protected function after(): bool

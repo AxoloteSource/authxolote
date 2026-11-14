@@ -391,6 +391,14 @@ class AuthController extends Controller
      *   "message": "Invalid OTP code.",
      *   "data": null
      * }
+     * @response status=422 scenario="Too many OTP attempts" {
+     *   "status": "error",
+     *   "message": "Too many OTP attempts. Please request a new code.",
+     *   "data": null
+     * }
+     * @response status=429 scenario="Too many requests" {
+     *   "message": "Too Many Attempts."
+     * }
      */
     public function resetPassword(OtpResetPasswordData $data, OtpResetPasswordLogic $logic): JsonResponse
     {

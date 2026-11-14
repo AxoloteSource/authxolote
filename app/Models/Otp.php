@@ -19,6 +19,7 @@ class Otp extends Model
         'user_id',
         'token',
         'otp_code',
+        'attempts',
         'expires_at',
         'used_at',
     ];
@@ -29,6 +30,7 @@ class Otp extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'attempts' => 'integer',
         'expires_at' => 'datetime',
         'used_at' => 'datetime',
     ];

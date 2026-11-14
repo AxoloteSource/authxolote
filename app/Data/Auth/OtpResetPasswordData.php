@@ -8,8 +8,6 @@ use Spatie\LaravelData\Data;
 
 class OtpResetPasswordData extends Data
 {
-    public ?string $used_at;
-
     public function __construct(
         #[Rule('required|string')]
         public string $token,
@@ -18,7 +16,6 @@ class OtpResetPasswordData extends Data
         public string $password,
     ) {
         $this->password = bcrypt($this->password);
-        $this->used_at = null;
     }
 
     public static function rules(): array
