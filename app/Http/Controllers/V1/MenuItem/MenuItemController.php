@@ -278,14 +278,15 @@ class MenuItemController extends Controller
      * Toggle a menu item for a role.
      *
      * Attaches the menu item to the role when `active` is true and detaches it
-     * when false.
+     * when false. This only changes the visibility for that role: the global
+     * `menu_items.active` flag is not modified.
      *
      * @authenticated
      *
      * @urlParam id string required Identifier of the menu item. Example: 0195f51e-4a37-7087-b5f7-57d001537abb
      * @urlParam roleId string required Identifier of the role. Example: 0195f51e-4a37-7087-b5f7-57d001537ab7
      *
-     * @bodyParam active boolean required Whether the menu item must be visible for the role. Example: true
+     * @bodyParam active boolean required Whether the menu item must be visible for the role. Does not change the global `menu_items.active` flag. Example: true
      *
      * @response status=200 scenario="Visibility updated" {
      *   "status": "OK",
