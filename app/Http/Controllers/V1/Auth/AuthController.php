@@ -107,6 +107,11 @@ class AuthController extends Controller
      * Validates the credentials and returns the user together with a new
      * Passport access token.
      *
+     * Authentication failures return the same `422 Invalid credentials`
+     * response for unknown emails, banned accounts, soft-deleted accounts and
+     * wrong passwords, so the endpoint does not reveal whether an account
+     * exists or its state.
+     *
      * @unauthenticated
      *
      * @bodyParam email string required Email address of the user. Example: jane.doe@example.com

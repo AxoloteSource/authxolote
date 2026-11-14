@@ -6,7 +6,6 @@ use App\Data\Auth\LoginData;
 use App\Http\Resources\Auth\LoginResource;
 use App\Models\User;
 use App\Services\OAuthTokenService;
-use AxoloteSource\Logics\Enums\Http;
 use AxoloteSource\Logics\Logics\ShowLogic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -36,10 +35,21 @@ class LoginShowLogic extends ShowLogic
         return parent::logic($input);
     }
 
+    protected function initializer(): bool
+    {
+        $user = $this->makeQuery()->first();
+
+        if ($user) {
+            $this->model = $user;
+        }
+
+        return true;
+    }
+
     protected function before(): bool
     {
-        if ($this->model->isBanned()) {
-            return $this->error(__('Your account has been banned.'), status: Http::Forbidden);
+        if (! $this->model->exists || $this->model->isBanned()) {
+            return $this->error(__('Invalid credentials'));
         }
 
         if (! $this->validCredentials()) {
