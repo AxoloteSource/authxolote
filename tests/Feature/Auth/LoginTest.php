@@ -73,6 +73,74 @@ class LoginTest extends TestCase
         $this->assertArrayHasKey('expires_in', $responseData, 'La expiración del token no está presente en la respuesta');
     }
 
+    public function test_login_is_rate_limited_per_account()
+    {
+        $this->withExceptionHandling();
+
+        $password = 'CorrectPassword123!';
+        $user = User::factory()->create([
+            'email' => 'rate-limited@example.com',
+            'password' => bcrypt($password),
+        ]);
+
+        for ($attempt = 1; $attempt <= 6; $attempt++) {
+            $response = $this->postJson('/api/v1/login', [
+                'email' => $user->email,
+                'password' => 'wrong-password',
+            ]);
+
+            if ($attempt < 6) {
+                $response->assertStatus(422);
+            }
+        }
+
+        $response->assertStatus(429);
+
+        $this->postJson('/api/v1/login', [
+            'email' => $user->email,
+            'password' => $password,
+        ])->assertStatus(429);
+    }
+
+    public function test_login_rate_limit_does_not_block_other_accounts()
+    {
+        $this->withExceptionHandling();
+
+        $lockedUser = User::factory()->create(['email' => 'locked@example.com']);
+
+        for ($attempt = 1; $attempt <= 6; $attempt++) {
+            $this->postJson('/api/v1/login', [
+                'email' => $lockedUser->email,
+                'password' => 'wrong-password',
+            ]);
+        }
+
+        $password = 'CorrectPassword123!';
+        $otherUser = User::factory()->create([
+            'email' => 'other@example.com',
+            'password' => bcrypt($password),
+        ]);
+
+        $this->postJson('/api/v1/login', [
+            'email' => $otherUser->email,
+            'password' => $password,
+        ])->assertStatus(200);
+    }
+
+    public function test_login_is_rate_limited_per_ip()
+    {
+        $this->withExceptionHandling();
+
+        for ($attempt = 1; $attempt <= 31; $attempt++) {
+            $response = $this->postJson('/api/v1/login', [
+                'email' => "unknown{$attempt}@example.com",
+                'password' => 'wrong-password',
+            ]);
+        }
+
+        $response->assertStatus(429);
+    }
+
     public function test_banned_user_cannot_login()
     {
         $user = User::factory()->create(['email' => 'banned-login@example.com']);

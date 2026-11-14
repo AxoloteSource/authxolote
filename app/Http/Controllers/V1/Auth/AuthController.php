@@ -143,6 +143,9 @@ class AuthController extends Controller
      *   "message": "Invalid credentials",
      *   "data": null
      * }
+     * @response status=429 scenario="Too many requests" {
+     *   "message": "Too Many Attempts."
+     * }
      */
     public function login(LoginData $data, LoginShowLogic $logic): JsonResponse
     {
