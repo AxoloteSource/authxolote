@@ -32,6 +32,10 @@ class UserDeleteLogic extends DeleteLogic
             return $this->error(__('You cannot delete your own user.'), status: Http::UnprocessableEntity);
         }
 
+        if ($this->model->isRoot() && ! auth()->user()?->isRoot()) {
+            return $this->error(__('You may not delete the root user.'), status: Http::Forbidden);
+        }
+
         $this->model->forceFill([
             'deleted_email' => $this->model->email,
             'email' => 'deleted+'.$this->model->id.'@deleted.local',

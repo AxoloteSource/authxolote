@@ -35,6 +35,31 @@ class UserDeleteTest extends TestCase
         ])->assertStatus(201);
     }
 
+    public function test_non_root_cannot_delete_the_root_user(): void
+    {
+        $admin = $this->loginAdmin();
+        $admin->attachAction('users.destroy');
+
+        $root = User::factory()->create(['role_id' => RoleEnum::Root->value]);
+
+        $this->deleteJson("/api/v1/users/{$root->id}")
+            ->assertStatus(403)
+            ->assertJsonPath('message', __('You may not delete the root user.'));
+
+        $this->assertNotSoftDeleted('users', ['id' => $root->id]);
+    }
+
+    public function test_root_can_delete_another_root_user(): void
+    {
+        $this->loginRoot();
+
+        $root = User::factory()->create(['role_id' => RoleEnum::Root->value]);
+
+        $this->deleteJson("/api/v1/users/{$root->id}")->assertNoContent();
+
+        $this->assertSoftDeleted('users', ['id' => $root->id]);
+    }
+
     public function test_it_returns_not_found_for_an_unknown_user(): void
     {
         $this->loginRoot();
