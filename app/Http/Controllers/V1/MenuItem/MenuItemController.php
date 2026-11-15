@@ -193,6 +193,10 @@ class MenuItemController extends Controller
     /**
      * Update a menu item.
      *
+     * The target menu must exist. An item can only change menus when it has no
+     * children, and its parent must belong to the same menu without creating
+     * cycles.
+     *
      * @authenticated
      *
      * @urlParam id string required Identifier of the menu item. Example: 0195f51e-4a37-7087-b5f7-57d001537abb
@@ -233,6 +237,11 @@ class MenuItemController extends Controller
      * @response status=404 scenario="Menu item not found" {
      *   "status": "error",
      *   "message": "Not Found",
+     *   "data": null
+     * }
+     * @response status=422 scenario="Invalid menu or hierarchy" {
+     *   "status": "error",
+     *   "message": "The parent menu item does not belong to the given menu.",
      *   "data": null
      * }
      */
