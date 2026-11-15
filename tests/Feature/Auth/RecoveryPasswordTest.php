@@ -55,7 +55,7 @@ class RecoveryPasswordTest extends TestCase
         $this->assertDatabaseCount('otps', $initialCount);
     }
 
-    public function test_code_debug_is_present_in_recovery_password_when_not_in_production()
+    public function test_it_does_not_return_the_otp_hash_outside_production()
     {
         config(['app.env' => 'local']);
         User::factory()->create(['email' => 'test2@example.com']);
@@ -67,12 +67,14 @@ class RecoveryPasswordTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'data' => [
-                    'code_debug',
+                    'token',
+                    'expires_at',
                 ],
-            ]);
+            ])
+            ->assertJsonMissingPath('data.code_debug');
     }
 
-    public function test_code_debug_is_missing_in_recovery_password_when_in_production()
+    public function test_it_does_not_return_the_otp_hash_in_production()
     {
         config(['app.env' => 'production']);
         User::factory()->create(['email' => 'test3@example.com']);
@@ -82,7 +84,7 @@ class RecoveryPasswordTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-            ->assertJsonMissing(['data' => ['code_debug']]);
+            ->assertJsonMissingPath('data.code_debug');
     }
 
     public function test_recovery_password_requires_valid_email()

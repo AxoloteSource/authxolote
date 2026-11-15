@@ -11,15 +11,9 @@ trait HasOtpResponse
      */
     protected function setOtpResponse(Otp $otp): void
     {
-        $response = [
+        $this->setResponse([
             'token' => $otp->token,
             'expires_at' => $otp->expires_at,
-        ];
-
-        if (config('app.env') !== 'production') {
-            $response['code_debug'] = $otp->otp_code;
-        }
-
-        $this->setResponse($response);
+        ]);
     }
 }
