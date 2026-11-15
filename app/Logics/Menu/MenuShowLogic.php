@@ -29,6 +29,7 @@ class MenuShowLogic extends ShowLogic
     {
         return $this->model->newQuery()
             ->where('slug', $this->input->slug)
+            ->whereHas('application')
             ->with([
                 'application',
                 'items' => fn ($query) => $query->whereNull('parent_id')

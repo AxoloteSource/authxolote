@@ -30,6 +30,19 @@ class Menu extends Model
         'sort_order' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function (Menu $menu): void {
+            if ($menu->isForceDeleting()) {
+                return;
+            }
+
+            $menu->items()->get()->each(function (MenuItem $item): void {
+                $item->delete();
+            });
+        });
+    }
+
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class);

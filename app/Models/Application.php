@@ -23,6 +23,19 @@ class Application extends Model
         'active' => 'boolean',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function (Application $application): void {
+            if ($application->isForceDeleting()) {
+                return;
+            }
+
+            $application->menus()->get()->each(function (Menu $menu): void {
+                $menu->delete();
+            });
+        });
+    }
+
     public function menus(): HasMany
     {
         return $this->hasMany(Menu::class);
