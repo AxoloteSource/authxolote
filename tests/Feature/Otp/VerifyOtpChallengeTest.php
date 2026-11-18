@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\Otp;
 
+use App\Http\Middleware\TransactionMiddleware;
 use App\Models\OtpChallenge;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
+use Tests\Support\TransactionMiddleware as TestTransactionMiddleware;
 use Tests\TestCase;
 
 class VerifyOtpChallengeTest extends TestCase
@@ -37,6 +39,20 @@ class VerifyOtpChallengeTest extends TestCase
         $response->assertStatus(422);
         $this->assertEquals('Invalid OTP code.', $response->json('message'));
         $this->assertEquals(1, $challenge->fresh()->attempts);
+    }
+
+    public function test_failed_attempts_persist_when_transaction_middleware_is_active(): void
+    {
+        $this->app->bind(TransactionMiddleware::class, TestTransactionMiddleware::class);
+
+        $challenge = OtpChallenge::factory()->create();
+
+        $response = $this->postJson("/api/v1/otp/challenges/{$challenge->id}/verify", [
+            'code' => '000000',
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertSame(1, $challenge->fresh()->attempts);
     }
 
     public function test_attempts_increment_on_each_failed_attempt(): void

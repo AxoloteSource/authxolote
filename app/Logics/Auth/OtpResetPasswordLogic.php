@@ -9,6 +9,7 @@ use App\Services\OAuthTokenService;
 use AxoloteSource\Logics\Logics\UpdateLogic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\LaravelData\Data;
 
@@ -27,7 +28,7 @@ class OtpResetPasswordLogic extends UpdateLogic
 
     public function run(OtpResetPasswordData|Data $input): JsonResponse
     {
-        return parent::logic($input);
+        return DB::transaction(fn (): JsonResponse => parent::logic($input));
     }
 
     protected function before(): bool

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Menu;
 
+use App\Models\Application;
 use App\Models\Menu;
 use Illuminate\Auth\AuthenticationException;
 use Tests\TestCase;
@@ -46,6 +47,23 @@ class MenuIndexTest extends TestCase
         $response->assertStatus(206);
         $response->assertJsonCount(1, 'data');
         $this->assertEquals('Topbar', $response->json('data.0.name'));
+    }
+
+    public function test_it_can_order_by_application_name(): void
+    {
+        $this->loginRoot();
+
+        $firstApplication = Application::factory()->create(['name' => 'Aaa App']);
+        $lastApplication = Application::factory()->create(['name' => 'Zzz App']);
+
+        Menu::factory()->create(['application_id' => $firstApplication->id]);
+        Menu::factory()->create(['application_id' => $lastApplication->id]);
+
+        $response = $this->getJson('/api/v1/menus?order_by=application.name&order=desc');
+
+        $response->assertStatus(206);
+        $this->assertSame('Zzz App', $response->json('data.0.application'));
+        $this->assertNotNull($response->json('data.0.items_count'));
     }
 
     public function test_it_returns_auth_menu_by_default(): void

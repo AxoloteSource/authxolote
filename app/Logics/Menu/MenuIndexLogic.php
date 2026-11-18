@@ -15,6 +15,29 @@ class MenuIndexLogic extends IndexLogic
 {
     public Model|Menu $model;
 
+    /**
+     * @var array<int, string>
+     */
+    protected array $allowOrderByFields = [
+        'name',
+        'slug',
+        'application_id',
+        'size',
+        'sort_order',
+        'active',
+        'created_at',
+        'updated_at',
+        'items_count',
+        'application',
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    protected array $aliasOrderBy = [
+        'application' => 'application.name',
+    ];
+
     public function __construct(Menu $model)
     {
         parent::__construct($model);
@@ -30,6 +53,21 @@ class MenuIndexLogic extends IndexLogic
         return $this->model->newQuery()
             ->with('application')
             ->withCount('items');
+    }
+
+    /**
+     * Relation ordering replaces the select clause, so the items count must be
+     * added again after applying it.
+     */
+    public function runQueryWithOrder(Builder $queryBuilder, string $orderBy, string $direction = 'asc'): Builder
+    {
+        $queryBuilder = parent::runQueryWithOrder($queryBuilder, $orderBy, $direction);
+
+        if (str_contains($orderBy, '.')) {
+            $queryBuilder->withCount('items');
+        }
+
+        return $queryBuilder;
     }
 
     protected function tableHeaders(): array

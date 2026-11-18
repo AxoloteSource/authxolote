@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Http\Middleware\TransactionMiddleware;
 use App\Models\Otp;
 use App\Models\Setting;
 use App\Models\User;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Passport\Token;
+use Tests\Support\TransactionMiddleware as TestTransactionMiddleware;
 use Tests\TestCase;
 
 class ResetPasswordTest extends TestCase
@@ -189,6 +191,31 @@ class ResetPasswordTest extends TestCase
             'token' => $token,
             'attempts' => 1,
         ]);
+    }
+
+    public function test_invalid_otp_attempts_persist_when_transaction_middleware_is_active()
+    {
+        $this->app->bind(TransactionMiddleware::class, TestTransactionMiddleware::class);
+
+        $user = User::factory()->create();
+        $token = (string) Str::uuid();
+
+        $otp = Otp::create([
+            'user_id' => $user->id,
+            'token' => $token,
+            'otp_code' => Hash::make('123456'),
+            'expires_at' => now()->addMinutes(15),
+        ]);
+
+        $this->postJson('/api/v1/reset-password', [
+            'token' => $token,
+            'otp_code' => 'wrong_code',
+            'password' => 'new_password123',
+            'password_confirmation' => 'new_password123',
+        ])->assertStatus(422)
+            ->assertJson(['message' => 'Invalid OTP code.']);
+
+        $this->assertSame(1, $otp->fresh()->attempts);
     }
 
     public function test_otp_is_locked_after_max_failed_attempts()

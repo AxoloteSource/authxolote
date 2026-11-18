@@ -53,6 +53,34 @@ class UserIndexTest extends TestCase
         $this->assertEquals('test@example.com', $response->json('data.0.email'));
     }
 
+    public function test_it_can_order_by_role_name(): void
+    {
+        $this->loginRoot();
+
+        $firstRole = Role::factory()->create(['name' => 'Aaa Role']);
+        $lastRole = Role::factory()->create(['name' => 'Zzz Role']);
+
+        User::factory()->create(['role_id' => $firstRole->id]);
+        User::factory()->create(['role_id' => $lastRole->id]);
+
+        $response = $this->getJson('/api/v1/users?order_by=role.name&order=desc');
+
+        $response->assertStatus(206);
+        $this->assertSame($lastRole->id, $response->json('data.0.role_id'));
+
+        $response = $this->getJson('/api/v1/users?order_by=role&order=asc');
+
+        $response->assertStatus(206);
+        $this->assertSame($firstRole->id, $response->json('data.0.role_id'));
+
+        User::factory()->create(['user_type_id' => UserTypeEnum::App->value]);
+
+        $response = $this->getJson('/api/v1/users?order_by=user_type_name&order=asc');
+
+        $response->assertStatus(206);
+        $this->assertSame('App', $response->json('data.0.user_type_name'));
+    }
+
     public function test_it_filters_users_by_user_type(): void
     {
         $this->loginRoot();
