@@ -33,7 +33,6 @@ abstract class TestCase extends BaseTestCase
     {
         $this->artisan('migrate:fresh');
         $this->artisan('db:seed');
-        $this->artisan('passport:client --personal --name="Laravel Personal Access Client"');
     }
 
     public function loginRoot(): User

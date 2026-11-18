@@ -22,7 +22,15 @@ class UserIndexResource extends JsonResource
                 'id' => $this->role->id,
                 'name' => $this->role->name,
             ]),
+            'user_type_id' => $this->user_type_id,
+            'user_type' => $this->whenLoaded('userType', fn () => [
+                'id' => $this->userType->id,
+                'name' => $this->userType->name,
+                'key' => $this->userType->key,
+            ]),
+            'user_type_name' => $this->whenLoaded('userType', fn () => $this->userType->name),
             'email_verified_at' => $this->email_verified_at,
+            'banned_at' => $this->banned_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

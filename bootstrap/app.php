@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\AttachRolesCommand;
+use App\Http\Middleware\EnsureUserIsNotBanned;
 use App\Http\Middleware\IsAllow;
 use AxoloteSource\Logics\Middleware\SetHeaders;
 use AxoloteSource\Logics\Middleware\TransactionMiddleware;
@@ -39,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'isAllow' => IsAllow::class,
+            'notBanned' => EnsureUserIsNotBanned::class,
             'setHeaders' => SetHeaders::class,
             'transaction' => TransactionMiddleware::class,
         ]);

@@ -53,6 +53,8 @@ return [
         'auth.user-lists.destroy' => 'actions.user_lists_destroy',
         'users.index' => 'actions.users_index',
         'users.store' => 'actions.users_store',
+        'users.destroy' => 'actions.users_destroy',
+        'users.ban' => 'actions.users_ban',
         'auth.flow.index' => 'actions.flow_index',
         'auth.flow.store' => 'actions.flow_store',
         'auth.flow.show' => 'actions.flow_show',
@@ -61,6 +63,10 @@ return [
         'auth.change-password' => 'actions.change_password',
         'auth.reset-password' => 'actions.reset_password',
         'auth.validate-credentials' => 'actions.validate_credentials',
+        'auth.personal-access-tokens.index' => 'actions.personal_access_tokens_index',
+        'auth.personal-access-tokens.store' => 'actions.personal_access_tokens_store',
+        'auth.personal-access-tokens.revoke' => 'actions.personal_access_tokens_revoke',
+        'auth.personal-access-tokens.destroy' => 'actions.personal_access_tokens_destroy',
     ],
 
 ];

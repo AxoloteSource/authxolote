@@ -40,6 +40,8 @@ return [
     'user_lists_destroy' => 'Delete user lists',
     'users_index' => 'List users',
     'users_store' => 'Create users',
+    'users_destroy' => 'Delete users',
+    'users_ban' => 'Ban or unban users',
     'flow_index' => 'List flow records',
     'flow_store' => 'Create flow records',
     'flow_show' => 'Show flow records',
@@ -48,5 +50,9 @@ return [
     'change_password' => 'Change user password',
     'reset_password' => 'Reset user password',
     'validate_credentials' => 'Validate user credentials',
+    'personal_access_tokens_index' => 'List personal access tokens',
+    'personal_access_tokens_store' => 'Create personal access tokens',
+    'personal_access_tokens_revoke' => 'Revoke personal access tokens',
+    'personal_access_tokens_destroy' => 'Delete personal access tokens',
 
 ];

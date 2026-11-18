@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\V1\User;
 
+use App\Data\User\UserBanData;
+use App\Data\User\UserDeleteData;
 use App\Data\User\UserIndexData;
 use App\Data\User\UserStoreData;
 use App\Http\Controllers\Controller;
+use App\Logics\User\UserBanLogic;
+use App\Logics\User\UserDeleteLogic;
 use App\Logics\User\UserIndexLogic;
 use App\Logics\User\UserStoreLogic;
 use Illuminate\Http\JsonResponse;
@@ -124,6 +128,82 @@ class UserController extends Controller
      * }
      */
     public function store(UserStoreData $data, UserStoreLogic $logic): JsonResponse
+    {
+        return $logic->run($data);
+    }
+
+    /**
+     * Delete a user.
+     *
+     * Soft deletes the user. The original email is preserved in
+     * `deleted_email` and the email field is anonymized so a new user can be
+     * registered with the same email.
+     *
+     * @authenticated
+     *
+     * @urlParam id string required Identifier of the user. Example: 0195f51e-4a37-7087-b5f7-57d001537ab6
+     *
+     * @response status=204 scenario="User deleted"
+     * @response status=404 scenario="User not found" {
+     *   "status": "error",
+     *   "message": "Not Found",
+     *   "data": null
+     * }
+     * @response status=422 scenario="Cannot delete your own user" {
+     *   "status": "error",
+     *   "message": "You cannot delete your own user.",
+     *   "data": null
+     * }
+     * @response status=403 scenario="Missing permission" {
+     *   "message": "You do not have permission to access this resource",
+     *   "data": {
+     *     "action": "users.destroy"
+     *   }
+     * }
+     */
+    public function destroy(UserDeleteData $data, UserDeleteLogic $logic): JsonResponse
+    {
+        return $logic->run($data);
+    }
+
+    /**
+     * Ban or unban a user.
+     *
+     * Toggles the banned status of the user. Banned users cannot sign in or
+     * access authenticated endpoints with existing tokens.
+     *
+     * @authenticated
+     *
+     * @urlParam id string required Identifier of the user. Example: 0195f51e-4a37-7087-b5f7-57d001537ab6
+     *
+     * @response status=200 scenario="User banned or unbanned" {
+     *   "status": "OK",
+     *   "message": null,
+     *   "data": {
+     *     "id": "0195f51e-4a37-7087-b5f7-57d001537ab6",
+     *     "name": "Jane Doe",
+     *     "email": "jane.doe@example.com",
+     *     "banned_at": "2026-11-11T10:00:00.000000Z"
+     *   }
+     * }
+     * @response status=404 scenario="User not found" {
+     *   "status": "error",
+     *   "message": "Not Found",
+     *   "data": null
+     * }
+     * @response status=422 scenario="Cannot ban your own user" {
+     *   "status": "error",
+     *   "message": "You cannot ban your own user.",
+     *   "data": null
+     * }
+     * @response status=403 scenario="Missing permission" {
+     *   "message": "You do not have permission to access this resource",
+     *   "data": {
+     *     "action": "users.ban"
+     *   }
+     * }
+     */
+    public function ban(UserBanData $data, UserBanLogic $logic): JsonResponse
     {
         return $logic->run($data);
     }

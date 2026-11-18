@@ -25,6 +25,7 @@ class LoginResource extends JsonResource
             'user' => [
                 'id' => $this->id,
                 'role_id' => $this->role_id,
+                'user_type_id' => $this->user_type_id,
                 'name' => $this->name,
                 'email' => $this->email,
                 'email_verified_at' => $this->email_verified_at,
@@ -33,6 +34,7 @@ class LoginResource extends JsonResource
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
                 'role' => $this->role,
+                'user_type' => $this->userType,
             ],
             'access_token' => $this->tokens['access_token'] ?? null,
             'refresh_token' => $this->tokens['refresh_token'] ?? null,
