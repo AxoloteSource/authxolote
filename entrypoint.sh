@@ -17,4 +17,10 @@ php artisan migrate --force
 php artisan storage:link --force || true
 php artisan optimize
 
+# Documentación de la API (Scribe). Activar con SCRIBE_GENERATE=true.
+# Se genera al arrancar porque necesita la BD (response calls). Un fallo no detiene el contenedor.
+if [ "${SCRIBE_GENERATE:-false}" = "true" ]; then
+	php artisan scribe:generate --no-interaction || echo "scribe:generate falló; se continúa sin docs."
+fi
+
 exec "$@"
