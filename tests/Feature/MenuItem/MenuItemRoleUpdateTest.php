@@ -56,6 +56,53 @@ class MenuItemRoleUpdateTest extends TestCase
         ]);
     }
 
+    public function test_it_does_not_change_the_menu_item_active_flag_when_detaching_a_role(): void
+    {
+        $this->loginAdmin()->attachAction(['auth.menu_items.roles.update']);
+
+        $item = MenuItem::factory()->create(['active' => true]);
+        $role = Role::factory()->create();
+        $item->roles()->attach($role->id);
+
+        $this->putJson("/api/v1/menu-items/{$item->id}/roles/{$role->id}", [
+            'active' => false,
+        ])->assertStatus(200);
+
+        $this->assertDatabaseMissing('menu_item_role', [
+            'menu_item_id' => $item->id,
+            'role_id' => $role->id,
+        ]);
+
+        $this->assertTrue($item->fresh()->active);
+        $this->assertDatabaseHas('menu_items', [
+            'id' => $item->id,
+            'active' => true,
+        ]);
+    }
+
+    public function test_it_does_not_change_the_menu_item_active_flag_when_attaching_a_role(): void
+    {
+        $this->loginAdmin()->attachAction(['auth.menu_items.roles.update']);
+
+        $item = MenuItem::factory()->create(['active' => false]);
+        $role = Role::factory()->create();
+
+        $this->putJson("/api/v1/menu-items/{$item->id}/roles/{$role->id}", [
+            'active' => true,
+        ])->assertStatus(200);
+
+        $this->assertDatabaseHas('menu_item_role', [
+            'menu_item_id' => $item->id,
+            'role_id' => $role->id,
+        ]);
+
+        $this->assertFalse($item->fresh()->active);
+        $this->assertDatabaseHas('menu_items', [
+            'id' => $item->id,
+            'active' => false,
+        ]);
+    }
+
     public function test_it_returns_not_found_when_menu_item_does_not_exist(): void
     {
         $this->loginRoot();

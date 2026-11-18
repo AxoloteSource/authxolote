@@ -52,6 +52,33 @@ class UserBanTest extends TestCase
         $this->putJson("/api/v1/users/{$root->id}/ban")->assertStatus(422);
     }
 
+    public function test_non_root_cannot_ban_the_root_user(): void
+    {
+        $admin = $this->loginAdmin();
+        $admin->attachAction('users.ban');
+
+        $root = User::factory()->create(['role_id' => RoleEnum::Root->value]);
+
+        $this->putJson("/api/v1/users/{$root->id}/ban")
+            ->assertStatus(403)
+            ->assertJsonPath('message', __('You may not ban the root user.'));
+
+        $this->assertNull($root->fresh()->banned_at);
+    }
+
+    public function test_root_can_ban_another_root_user(): void
+    {
+        $this->loginRoot();
+
+        $root = User::factory()->create(['role_id' => RoleEnum::Root->value]);
+
+        $this->putJson("/api/v1/users/{$root->id}/ban")
+            ->assertOk()
+            ->assertJsonPath('data.id', $root->id);
+
+        $this->assertNotNull($root->fresh()->banned_at);
+    }
+
     public function test_it_returns_not_found_for_an_unknown_user(): void
     {
         $this->loginRoot();

@@ -13,6 +13,41 @@ use Spatie\LaravelData\Data;
 
 class UserIndexLogic extends IndexLogic
 {
+    /**
+     * @var array<int, string>
+     */
+    protected array $disallowedFilterProperties = [
+        'deleted_email',
+        'deleted_at',
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    protected array $allowOrderByFields = [
+        'name',
+        'email',
+        'role_id',
+        'user_type_id',
+        'email_verified_at',
+        'banned_at',
+        'created_at',
+        'updated_at',
+        'role',
+        'userType',
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    protected array $aliasOrderBy = [
+        'role' => 'role.name',
+        'userType' => 'userType.name',
+        'user_type_name' => 'userType.name',
+    ];
+
     public function __construct(protected User $user)
     {
         parent::__construct($user);

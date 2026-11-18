@@ -15,6 +15,22 @@ use Spatie\LaravelData\Data;
 
 class UserListUsersLogic extends IndexLogic
 {
+    /**
+     * @var array<int, string>
+     */
+    protected array $disallowedFilterProperties = [
+        'role_id',
+        'user_type_id',
+        'email_verified_at',
+        'banned_at',
+        'deleted_email',
+        'deleted_at',
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
+
     public Model|UserList $model;
 
     public UserListUsersData|Data $input;

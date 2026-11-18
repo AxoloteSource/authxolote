@@ -47,7 +47,7 @@ class AuthController extends Controller
      * @bodyParam email string required Unique email address of the user. Example: jane.doe@example.com
      * @bodyParam password string required Password of the user. Minimum length and complexity are defined in the system settings. Example: Password123!
      * @bodyParam password_confirmation string required Confirmation of the password. Must match `password`. Example: Password123!
-     * @bodyParam role_key string required Key of the role assigned to the new user. Example: admin
+     * @bodyParam role_key string required Key of the role assigned to the new user. Only a root caller may use `root`. Example: admin
      *
      * @response status=201 scenario="User registered" {
      *   "status": "OK",
@@ -81,6 +81,11 @@ class AuthController extends Controller
      *     "action": "auth.register"
      *   }
      * }
+     * @response status=403 scenario="Root role assignment forbidden" {
+     *   "status": "error",
+     *   "message": "You may not assign the root role.",
+     *   "data": null
+     * }
      * @response status=422 scenario="Validation error" {
      *   "status": "error",
      *   "message": null,
@@ -101,6 +106,11 @@ class AuthController extends Controller
      *
      * Validates the credentials and returns the user together with a new
      * Passport access token.
+     *
+     * Authentication failures return the same `422 Invalid credentials`
+     * response for unknown emails, banned accounts, soft-deleted accounts and
+     * wrong passwords, so the endpoint does not reveal whether an account
+     * exists or its state.
      *
      * @unauthenticated
      *
@@ -137,6 +147,9 @@ class AuthController extends Controller
      *   "status": "error",
      *   "message": "Invalid credentials",
      *   "data": null
+     * }
+     * @response status=429 scenario="Too many requests" {
+     *   "message": "Too Many Attempts."
      * }
      */
     public function login(LoginData $data, LoginShowLogic $logic): JsonResponse
@@ -385,6 +398,14 @@ class AuthController extends Controller
      *   "status": "error",
      *   "message": "Invalid OTP code.",
      *   "data": null
+     * }
+     * @response status=422 scenario="Too many OTP attempts" {
+     *   "status": "error",
+     *   "message": "Too many OTP attempts. Please request a new code.",
+     *   "data": null
+     * }
+     * @response status=429 scenario="Too many requests" {
+     *   "message": "Too Many Attempts."
      * }
      */
     public function resetPassword(OtpResetPasswordData $data, OtpResetPasswordLogic $logic): JsonResponse

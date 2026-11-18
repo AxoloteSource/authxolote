@@ -33,7 +33,7 @@ class UserController extends Controller
      * @queryParam order string Sort direction. Allowed values: asc, desc. Example: asc
      * @queryParam order_by string Column used to sort the results. Example: name
      * @queryParam search string Free text search applied to the user email. Example: jane
-     * @queryParam filters string optional JSON-encoded list of filters. Each item must contain "property", "value" and optionally "operator". Example: [{"property":"name","value":"jane","operator":"="}]
+     * @queryParam filters string optional JSON-encoded list of filters. Each item must contain "property", "value" and optionally "operator". Filters on disallowed properties or operators return 422. Example: [{"property":"name","value":"jane","operator":"="}]
      *
      * @response status=206 scenario="Paginated users" {
      *   "current_page": 1,
@@ -97,7 +97,7 @@ class UserController extends Controller
      *
      * @bodyParam name string required Full name of the user. Example: Jane Doe
      * @bodyParam email string required Unique email address of the user. Example: jane.doe@example.com
-     * @bodyParam role_id string required Identifier of the role assigned to the user. Example: 0195f51e-4a37-7087-b5f7-57d001537ab7
+     * @bodyParam role_id string required Identifier of the role assigned to the user. Only a root caller may use the root role. Example: 0195f51e-4a37-7087-b5f7-57d001537ab7
      * @bodyParam password string required Password of the user. Minimum length is 8 characters. Example: Password123!
      *
      * @response status=201 scenario="User created" {
@@ -116,6 +116,11 @@ class UserController extends Controller
      *     "created_at": "2026-01-15T10:00:00.000000Z",
      *     "updated_at": "2026-01-15T10:00:00.000000Z"
      *   }
+     * }
+     * @response status=403 scenario="Root role assignment forbidden" {
+     *   "status": "error",
+     *   "message": "You may not assign the root role.",
+     *   "data": null
      * }
      * @response status=422 scenario="Validation error" {
      *   "status": "error",
@@ -152,6 +157,11 @@ class UserController extends Controller
      * @response status=422 scenario="Cannot delete your own user" {
      *   "status": "error",
      *   "message": "You cannot delete your own user.",
+     *   "data": null
+     * }
+     * @response status=403 scenario="Root user protected" {
+     *   "status": "error",
+     *   "message": "You may not delete the root user.",
      *   "data": null
      * }
      * @response status=403 scenario="Missing permission" {
@@ -194,6 +204,11 @@ class UserController extends Controller
      * @response status=422 scenario="Cannot ban your own user" {
      *   "status": "error",
      *   "message": "You cannot ban your own user.",
+     *   "data": null
+     * }
+     * @response status=403 scenario="Root user protected" {
+     *   "status": "error",
+     *   "message": "You may not ban the root user.",
      *   "data": null
      * }
      * @response status=403 scenario="Missing permission" {

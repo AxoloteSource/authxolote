@@ -3,9 +3,11 @@
 namespace App\Logics\Auth;
 
 use App\Data\Auth\RegisterData;
+use App\Enums\RoleEnum;
 use App\Http\Resources\Auth\LoginResource;
 use App\Models\User;
 use App\Services\OAuthTokenService;
+use AxoloteSource\Logics\Enums\Http;
 use AxoloteSource\Logics\Logics\StoreLogic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -16,6 +18,8 @@ use Spatie\LaravelData\Data;
 class RegisterStoreLogic extends StoreLogic
 {
     public Model|User $model;
+
+    protected Data|RegisterData $input;
 
     /**
      * @var array<string, mixed>
@@ -30,6 +34,18 @@ class RegisterStoreLogic extends StoreLogic
     public function run(RegisterData|Data $input): JsonResponse
     {
         return parent::logic($input);
+    }
+
+    protected function before(): bool
+    {
+        if ($this->input->role_id === RoleEnum::Root->value && ! auth()->user()?->isRoot()) {
+            return $this->error(
+                __('You may not assign the root role.'),
+                status: Http::Forbidden
+            );
+        }
+
+        return true;
     }
 
     protected function after(): bool

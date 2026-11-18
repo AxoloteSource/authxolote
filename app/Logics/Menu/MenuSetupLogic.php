@@ -15,6 +15,7 @@ use App\Models\Application;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Role;
+use AxoloteSource\Logics\Enums\Http;
 use AxoloteSource\Logics\Logics\StoreLogic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -35,6 +36,29 @@ class MenuSetupLogic extends StoreLogic
     public function run(MenuSetupData|Data $input): JsonResponse
     {
         return parent::logic($input);
+    }
+
+    protected function before(): bool
+    {
+        if (! $this->user()?->belongsToAction('auth.applications.store')
+            && ! Application::findBySlug($this->input->application->slug)) {
+            return $this->forbidden('auth.applications.store');
+        }
+
+        if ($this->input->force) {
+            foreach (['auth.menus.destroy', 'auth.menu_items.destroy'] as $action) {
+                if (! $this->user()?->belongsToAction($action)) {
+                    return $this->forbidden($action);
+                }
+            }
+        }
+
+        if ($this->payloadHasRoles($this->input->menu_items)
+            && ! $this->user()?->belongsToAction('auth.menu_items.roles.update')) {
+            return $this->forbidden('auth.menu_items.roles.update');
+        }
+
+        return true;
     }
 
     public function action(): self
@@ -134,6 +158,12 @@ class MenuSetupLogic extends StoreLogic
 
         if ($existing) {
             if ($this->input->size !== null && $existing->size !== $this->input->size) {
+                if (! $this->user()?->belongsToAction('auth.menus.update')) {
+                    $this->forbidden('auth.menus.update');
+
+                    return $existing;
+                }
+
                 $existing->update(['size' => $this->input->size]);
             }
 
@@ -161,6 +191,10 @@ class MenuSetupLogic extends StoreLogic
         $sortOrder = 0;
 
         foreach ($items as $key => $item) {
+            if ($this->hasErrors()) {
+                return;
+            }
+
             $hasChildren = isset($item['menu_items']) && is_array($item['menu_items']);
             $name = $item['name'] ?? $key;
             $type = $hasChildren ? MenuItemType::Header : MenuItemType::Link;
@@ -195,6 +229,12 @@ class MenuSetupLogic extends StoreLogic
 
             if ($existing) {
                 if ($existing->type !== $type) {
+                    if (! $this->user()?->belongsToAction('auth.menu_items.update')) {
+                        $this->forbidden('auth.menu_items.update');
+
+                        return;
+                    }
+
                     $existing->update(['type' => $type]);
                 }
 
@@ -230,5 +270,36 @@ class MenuSetupLogic extends StoreLogic
                 $this->createMenuItems($menu, $item['menu_items'], $logic->model->id, $roles, $inheritRoles);
             }
         }
+    }
+
+    private function forbidden(string $action): false
+    {
+        return $this->error(
+            __('You do not have permission to access this resource'),
+            ['action' => $action],
+            Http::Forbidden
+        );
+    }
+
+    /**
+     * @param  array<string|int, mixed>  $items
+     */
+    private function payloadHasRoles(array $items): bool
+    {
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            if (! empty($item['roles'])) {
+                return true;
+            }
+
+            if (isset($item['menu_items']) && is_array($item['menu_items']) && $this->payloadHasRoles($item['menu_items'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

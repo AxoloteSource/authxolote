@@ -17,7 +17,6 @@ class ChangePasswordResource extends JsonResource
         return [
             'token' => $this['token'],
             'expires_at' => $this['expires_at'],
-            'code_debug' => $this->when(isset($this['code_debug']), fn () => $this['code_debug']),
         ];
     }
 }

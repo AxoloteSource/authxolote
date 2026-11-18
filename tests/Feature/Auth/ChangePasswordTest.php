@@ -59,7 +59,7 @@ class ChangePasswordTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_code_debug_is_not_present_in_production()
+    public function test_it_does_not_return_the_otp_hash_in_production()
     {
         config(['app.env' => 'production']);
 
@@ -70,10 +70,10 @@ class ChangePasswordTest extends TestCase
             ->postJson('/api/v1/change-password');
 
         $response->assertStatus(201)
-            ->assertJsonMissing(['data' => ['code_debug']]);
+            ->assertJsonMissingPath('data.code_debug');
     }
 
-    public function test_code_debug_is_present_in_local()
+    public function test_it_does_not_return_the_otp_hash_in_local()
     {
         config(['app.env' => 'local']);
 
@@ -86,8 +86,10 @@ class ChangePasswordTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'data' => [
-                    'code_debug',
+                    'token',
+                    'expires_at',
                 ],
-            ]);
+            ])
+            ->assertJsonMissingPath('data.code_debug');
     }
 }

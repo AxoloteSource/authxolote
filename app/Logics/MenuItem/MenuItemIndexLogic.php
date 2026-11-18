@@ -15,6 +15,30 @@ class MenuItemIndexLogic extends IndexLogic
 {
     public Model|MenuItem $model;
 
+    /**
+     * @var array<int, string>
+     */
+    protected array $allowOrderByFields = [
+        'name',
+        'slug',
+        'type',
+        'route',
+        'path',
+        'menu_id',
+        'sort_order',
+        'active',
+        'created_at',
+        'updated_at',
+        'menu',
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    protected array $aliasOrderBy = [
+        'menu' => 'menu.name',
+    ];
+
     public function __construct(MenuItem $model)
     {
         parent::__construct($model);
@@ -32,6 +56,15 @@ class MenuItemIndexLogic extends IndexLogic
             ->with('menu')
             ->with('children')
             ->orderBy('sort_order');
+    }
+
+    /**
+     * An explicit ordering requested by the client must take precedence over
+     * the default sort order.
+     */
+    public function runQueryWithOrder(Builder $queryBuilder, string $orderBy, string $direction = 'asc'): Builder
+    {
+        return parent::runQueryWithOrder($queryBuilder->reorder(), $orderBy, $direction);
     }
 
     protected function tableHeaders(): array

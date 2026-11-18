@@ -38,6 +38,10 @@ class UserBanLogic extends Logic
             return $this->error(__('You cannot ban your own user.'), status: Http::UnprocessableEntity);
         }
 
+        if ($user->isRoot() && ! auth()->user()?->isRoot()) {
+            return $this->error(__('You may not ban the root user.'), status: Http::Forbidden);
+        }
+
         $this->user = $user;
 
         return true;

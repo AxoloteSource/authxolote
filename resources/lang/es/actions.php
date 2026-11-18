@@ -47,6 +47,7 @@ return [
     'flow_show' => 'Ver registros de flujo',
     'flow_update' => 'Actualizar registros de flujo',
     'flow_delete' => 'Eliminar registros de flujo',
+    'register' => 'Registrar usuarios',
     'change_password' => 'Cambiar contraseña del usuario',
     'reset_password' => 'Restablecer contraseña del usuario',
     'validate_credentials' => 'Validar credenciales del usuario',

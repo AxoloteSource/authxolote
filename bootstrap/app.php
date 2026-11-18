@@ -3,8 +3,8 @@
 use App\Console\Commands\AttachRolesCommand;
 use App\Http\Middleware\EnsureUserIsNotBanned;
 use App\Http\Middleware\IsAllow;
+use App\Http\Middleware\TransactionMiddleware;
 use AxoloteSource\Logics\Middleware\SetHeaders;
-use AxoloteSource\Logics\Middleware\TransactionMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

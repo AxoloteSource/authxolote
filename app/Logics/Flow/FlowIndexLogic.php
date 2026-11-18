@@ -42,7 +42,6 @@ class FlowIndexLogic extends FlowIndexLogicBase
     public function isAllow(): array
     {
         return [
-            'roles' => 'auth.role.index',
             'actions' => 'auth.action.index',
         ];
     }

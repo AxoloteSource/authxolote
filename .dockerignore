@@ -20,6 +20,9 @@ storage/framework/sessions/*
 storage/framework/views/*
 storage/pail
 
+# Passport signing keys must never enter the build context.
+storage/*.key
+
 .env
 .env.*
 !.env.example

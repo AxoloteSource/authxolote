@@ -72,13 +72,6 @@ class Setting extends Model
         return filter_var($data ?? false, FILTER_VALIDATE_BOOLEAN);
     }
 
-    public static function getOtpLength(): int
-    {
-        $data = self::findByKey(SettingEnum::OtpLength)?->value;
-
-        return intval($data ?? 4);
-    }
-
     public static function getOtpExpiresInMinutes(): int
     {
         $data = self::findByKey(SettingEnum::OtpExpiresInMinutes)?->value;

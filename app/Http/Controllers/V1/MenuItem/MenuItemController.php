@@ -41,7 +41,7 @@ class MenuItemController extends Controller
      * @queryParam order string Sort direction. Allowed values: asc, desc. Example: asc
      * @queryParam order_by string Column used to sort the results. Example: sort_order
      * @queryParam search string Free text search applied to the item name. Example: users
-     * @queryParam filters string optional JSON-encoded list of filters. Each item must contain "property", "value" and optionally "operator". Example: [{"property":"name","value":"jane","operator":"="}]
+     * @queryParam filters string optional JSON-encoded list of filters. Each item must contain "property", "value" and optionally "operator". Filters on disallowed properties or operators return 422. Example: [{"property":"name","value":"jane","operator":"="}]
      *
      * @response status=206 scenario="Paginated menu items" {
      *   "current_page": 1,
@@ -193,6 +193,10 @@ class MenuItemController extends Controller
     /**
      * Update a menu item.
      *
+     * The target menu must exist. An item can only change menus when it has no
+     * children, and its parent must belong to the same menu without creating
+     * cycles.
+     *
      * @authenticated
      *
      * @urlParam id string required Identifier of the menu item. Example: 0195f51e-4a37-7087-b5f7-57d001537abb
@@ -233,6 +237,11 @@ class MenuItemController extends Controller
      * @response status=404 scenario="Menu item not found" {
      *   "status": "error",
      *   "message": "Not Found",
+     *   "data": null
+     * }
+     * @response status=422 scenario="Invalid menu or hierarchy" {
+     *   "status": "error",
+     *   "message": "The parent menu item does not belong to the given menu.",
      *   "data": null
      * }
      */
@@ -278,14 +287,15 @@ class MenuItemController extends Controller
      * Toggle a menu item for a role.
      *
      * Attaches the menu item to the role when `active` is true and detaches it
-     * when false.
+     * when false. This only changes the visibility for that role: the global
+     * `menu_items.active` flag is not modified.
      *
      * @authenticated
      *
      * @urlParam id string required Identifier of the menu item. Example: 0195f51e-4a37-7087-b5f7-57d001537abb
      * @urlParam roleId string required Identifier of the role. Example: 0195f51e-4a37-7087-b5f7-57d001537ab7
      *
-     * @bodyParam active boolean required Whether the menu item must be visible for the role. Example: true
+     * @bodyParam active boolean required Whether the menu item must be visible for the role. Does not change the global `menu_items.active` flag. Example: true
      *
      * @response status=200 scenario="Visibility updated" {
      *   "status": "OK",

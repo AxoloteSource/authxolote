@@ -27,6 +27,10 @@ RUN composer install \
 
 COPY . .
 
+# Fail the build if Passport signing keys ever reach the image again.
+RUN test ! -e storage/oauth-private.key \
+    && test ! -e storage/oauth-public.key
+
 RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
     && php artisan package:discover --ansi
 

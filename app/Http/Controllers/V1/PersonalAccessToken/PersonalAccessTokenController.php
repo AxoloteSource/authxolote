@@ -78,7 +78,7 @@ class PersonalAccessTokenController extends Controller
      *
      * @authenticated
      *
-     * @bodyParam user_id string required Identifier of the user that will own the token. Example: 0195f51e-4a37-7087-b5f7-57d001537ab6
+     * @bodyParam user_id string required Identifier of the user that will own the token. Must be the caller's own id or belong to an app-type user. Example: 0195f51e-4a37-7087-b5f7-57d001537ab6
      * @bodyParam name string required Name used to identify the token. Example: deploy
      * @bodyParam expires_in int optional Token lifetime in days. Allowed values: 7, 30, 60, 90. Omit or send null for a token that does not expire. Example: 30
      *
@@ -100,6 +100,11 @@ class PersonalAccessTokenController extends Controller
      *       "user_type_id": "a333c865-bdcb-4658-b1f2-e2e8a78a192a"
      *     }
      *   }
+     * }
+     * @response status=403 scenario="Token for another user forbidden" {
+     *   "status": "error",
+     *   "message": "You may not create a personal access token for another user.",
+     *   "data": null
      * }
      * @response status=422 scenario="Validation error" {
      *   "status": "error",
