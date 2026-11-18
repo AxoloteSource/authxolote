@@ -5,11 +5,16 @@
 # ---------------------------------------------------------------------------
 FROM dunglas/frankenphp:php8.4-trixie AS vendor
 
-RUN install-php-extensions zip
+RUN install-php-extensions zip gd
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
+
+ARG GITHUB_TOKEN
+RUN if [ -n "$GITHUB_TOKEN" ]; then \
+        composer config --global github-oauth.github.com "$GITHUB_TOKEN"; \
+    fi
 
 COPY composer.json composer.lock ./
 RUN composer install \
@@ -25,13 +30,12 @@ COPY . .
 RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
     && php artisan package:discover --ansi
 
-
 # ---------------------------------------------------------------------------
 # 2) Runtime image (FrankenPHP)
 # ---------------------------------------------------------------------------
 FROM dunglas/frankenphp:php8.4-trixie AS app
 
-RUN install-php-extensions pdo_mysql
+RUN install-php-extensions pdo_mysql redis
 
 WORKDIR /app
 
@@ -47,6 +51,7 @@ RUN chmod +x /usr/local/bin/entrypoint.sh \
         storage/framework/views \
         storage/logs \
         bootstrap/cache \
+        resources/views \
     && chmod -R ug+rwX storage bootstrap/cache
 
 EXPOSE 80 443 443/udp

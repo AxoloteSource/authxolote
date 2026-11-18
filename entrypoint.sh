@@ -14,7 +14,7 @@ if [ ! -f storage/oauth-private.key ] && [ -z "${PASSPORT_PRIVATE_KEY:-}" ]; the
 fi
 
 php artisan migrate --force
-php artisan storage:link || true
+php artisan storage:link --force || true
 php artisan optimize
 
 exec "$@"
